@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "940094050153",
+    "project_id": "prostatecancarerv8",
+    "storage_bucket": "prostatecancarerv8.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:940094050153:android:c1de9aa30e29ec996ab7f8",
+        "android_client_info": {
+          "package_name": "drkuo.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "940094050153-i3tcddepabnphv1l6ncfo9n7872j6pk5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCH4sPv6-G4qgX_r2hJAKf-Oa5He4jSFrQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "940094050153-i3tcddepabnphv1l6ncfo9n7872j6pk5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
