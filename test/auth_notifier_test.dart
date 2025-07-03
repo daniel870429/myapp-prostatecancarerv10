@@ -2,7 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
 import 'package:myapp/domain/repositories/auth_repository.dart';
-import 'package:myapp/data/data_providers.dart';
+import 'package:myapp/data/repositories/auth_repository_impl.dart';
 import 'package:myapp/presentation/features/auth/notifiers/auth_notifier.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

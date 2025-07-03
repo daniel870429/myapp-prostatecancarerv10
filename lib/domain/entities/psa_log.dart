@@ -9,7 +9,8 @@ enum PsaLogSource {
 }
 
 @freezed
-class PsaLog with _$PsaLog {
+abstract class PsaLog with _$PsaLog {
+  const PsaLog._();
   const factory PsaLog({
     required int id,
     required double value,

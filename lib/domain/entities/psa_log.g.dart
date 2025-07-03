@@ -6,7 +6,7 @@ part of 'psa_log.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$PsaLogImpl _$$PsaLogImplFromJson(Map<String, dynamic> json) => _$PsaLogImpl(
+_PsaLog _$PsaLogFromJson(Map<String, dynamic> json) => _PsaLog(
       id: (json['id'] as num).toInt(),
       value: (json['value'] as num).toDouble(),
       recordedAt: DateTime.parse(json['recordedAt'] as String),
@@ -17,8 +17,7 @@ _$PsaLogImpl _$$PsaLogImplFromJson(Map<String, dynamic> json) => _$PsaLogImpl(
           PsaLogSource.userUploaded,
     );
 
-Map<String, dynamic> _$$PsaLogImplToJson(_$PsaLogImpl instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$PsaLogToJson(_PsaLog instance) => <String, dynamic>{
       'id': instance.id,
       'value': instance.value,
       'recordedAt': instance.recordedAt.toIso8601String(),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../data/data_providers.dart';
 import '../../auth/notifiers/auth_notifier.dart';
@@ -32,7 +33,9 @@ class ProfilePage extends ConsumerWidget {
               );
               if (confirmed == true) {
                 await ref.read(authNotifierProvider.notifier).signOut();
-                // TODO: Navigate to login page
+                if (context.mounted) {
+                  context.go('/login');
+                }
               }
             },
           ),

@@ -7,7 +7,6 @@ import 'repositories/psa_repository_impl.dart';
 import 'repositories/symptom_repository_impl.dart';
 import '../domain/entities/psa_log.dart';
 import '../domain/entities/symptom_log.dart';
-import '../domain/repositories/auth_repository.dart';
 import '../domain/repositories/psa_repository.dart';
 import '../domain/repositories/symptom_repository.dart';
 
@@ -30,12 +29,6 @@ final databaseProvider = Provider<AppDatabase>((ref) {
 });
 
 // -- Repositories --
-final authRepositoryProvider = Provider<AuthRepository>((ref) {
-  final firebaseAuth = ref.watch(firebaseAuthProvider);
-  final firestore = ref.watch(firestoreProvider);
-  return AuthRepositoryImpl(firebaseAuth, firestore);
-});
-
 final symptomRepositoryProvider = Provider<SymptomRepository>((ref) {
   final firestore = ref.watch(firestoreProvider);
   return SymptomRepositoryImpl(firestore);
@@ -63,7 +56,7 @@ final symptomsStreamProvider = StreamProvider<List<SymptomLog>>((ref) {
 
 final psaLogsStreamProvider = StreamProvider<List<PsaLog>>((ref) {
   final psaRepository = ref.watch(psaRepositoryProvider);
-  final user = ref.watch(authStateChangesProvider).asData?.value;
+  final user = ref.watch(authRepositoryProvider).currentUser;
   if (user != null) {
     return psaRepository.getPsaLogs(user.uid);
   }

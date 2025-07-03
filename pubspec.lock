@@ -370,7 +370,7 @@ packages:
     source: hosted
     version: "0.5.10+14"
   firebase_app_check:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: firebase_app_check
       sha256: "2ea4d48d3464621fa6abe3e3a68de3706321707748aa67f87deeb0141abc17a1"

@@ -6,8 +6,7 @@ part of 'symptom_log.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$SymptomLogImpl _$$SymptomLogImplFromJson(Map<String, dynamic> json) =>
-    _$SymptomLogImpl(
+_SymptomLog _$SymptomLogFromJson(Map<String, dynamic> json) => _SymptomLog(
       id: (json['id'] as num).toInt(),
       name: json['name'] as String,
       severity: (json['severity'] as num).toInt(),
@@ -16,7 +15,7 @@ _$SymptomLogImpl _$$SymptomLogImplFromJson(Map<String, dynamic> json) =>
       userId: json['userId'] as String,
     );
 
-Map<String, dynamic> _$$SymptomLogImplToJson(_$SymptomLogImpl instance) =>
+Map<String, dynamic> _$SymptomLogToJson(_SymptomLog instance) =>
     <String, dynamic>{
       'id': instance.id,
       'name': instance.name,

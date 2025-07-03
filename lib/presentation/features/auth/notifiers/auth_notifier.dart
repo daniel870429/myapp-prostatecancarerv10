@@ -1,5 +1,5 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import '../../../../data/data_providers.dart';
+import '../../../../data/repositories/auth_repository_impl.dart';
 import '../../../../domain/repositories/auth_repository.dart';
 
 part 'auth_notifier.g.dart';

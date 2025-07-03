@@ -45,10 +45,10 @@ class AuthRepositoryImpl implements AuthRepository {
           });
         }
       }
+    } on FirebaseAuthException catch (e) {
+      throw Exception('Failed to sign in with Google: ${e.message}');
     } catch (e) {
-      // TODO: Handle exceptions
-      // print(e);
-      rethrow;
+      throw Exception('An unknown error occurred during Google sign-in.');
     }
   }
 
@@ -56,10 +56,10 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<void> signOut() async {
     try {
       await _firebaseAuth.signOut();
+    } on FirebaseAuthException catch (e) {
+      throw Exception('Failed to sign out: ${e.message}');
     } catch (e) {
-      // TODO: Handle exceptions
-      // print(e);
-      rethrow;
+      throw Exception('An unknown error occurred during sign-out.');
     }
   }
 
@@ -69,15 +69,27 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<UserCredential> createUserWithEmailAndPassword(
-      String email, String password) {
-    // TODO: implement createUserWithEmailAndPassword
-    throw UnimplementedError();
+      String email, String password) async {
+    try {
+      return await _firebaseAuth.createUserWithEmailAndPassword(
+          email: email, password: password);
+    } on FirebaseAuthException catch (e) {
+      throw Exception('Failed to create user: ${e.message}');
+    } catch (e) {
+      throw Exception('An unknown error occurred during user creation.');
+    }
   }
 
   @override
   Future<UserCredential> signInWithEmailAndPassword(
-      String email, String password) {
-    // TODO: implement signInWithEmailAndPassword
-    throw UnimplementedError();
+      String email, String password) async {
+    try {
+      return await _firebaseAuth.signInWithEmailAndPassword(
+          email: email, password: password);
+    } on FirebaseAuthException catch (e) {
+      throw Exception('Failed to sign in: ${e.message}');
+    } catch (e) {
+      throw Exception('An unknown error occurred during sign-in.');
+    }
   }
 }

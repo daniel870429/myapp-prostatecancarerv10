@@ -5,20 +5,14 @@ import '../../../../data/data_providers.dart';
 import '../widgets/psa_trend_card.dart';
 import '../widgets/symptom_summary_card.dart';
 
-class HomePage extends ConsumerWidget {
+class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final authState = ref.watch(authStateChangesProvider);
-
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Welcome, ${authState.asData?.value?.displayName ?? 'User'}',
-        ),
-      ),
-      body: const SingleChildScrollView(
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      appBar: _HomeAppBar(),
+      body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.all(AppSpacing.medium),
           child: Column(
@@ -33,4 +27,21 @@ class HomePage extends ConsumerWidget {
       ),
     );
   }
+}
+
+class _HomeAppBar extends ConsumerWidget implements PreferredSizeWidget {
+  const _HomeAppBar();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final authState = ref.watch(authStateChangesProvider);
+    return AppBar(
+      title: Text(
+        'Welcome, ${authState.asData?.value?.displayName ?? 'User'}',
+      ),
+    );
+  }
+
+  @override
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }
