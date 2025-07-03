@@ -15,7 +15,6 @@ final logger = Logger(
     methodCount: 1,
     errorMethodCount: 5,
     lineLength: 80,
-    printTime: true, // Re-enable printTime as it's a valid parameter for PrettyPrinter
   ),
 );
 
