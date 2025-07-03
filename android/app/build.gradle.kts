@@ -44,15 +44,16 @@ android {
 
 dependencies {
   // Add the dependency for core library desugaring
-  coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
+  coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
 
   // Import the Firebase BoM
-  implementation(platform("com.google.firebase:firebase-bom:33.16.0"))
+  implementation(platform("com.google.firebase:firebase-bom:33.15.0"))
 
 
   // TODO: Add the dependencies for Firebase products you want to use
   // When using the BoM, don't specify versions in Firebase dependencies
   implementation("com.google.firebase:firebase-analytics")
+  implementation("com.google.firebase:firebase-ai")
 
 
   // Add the dependencies for any other desired Firebase products

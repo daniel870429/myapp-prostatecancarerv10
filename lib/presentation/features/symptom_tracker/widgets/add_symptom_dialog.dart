@@ -2,7 +2,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../core/theme/app_spacing.dart';
+import '../../../global_widgets/buttons/primary_action_button.dart';
+import '../../../global_widgets/inputs/app_text_field.dart';
 import '../notifiers/symptom_tracker_notifier.dart';
+import 'gradient_slider_track_shape.dart';
 
 class AddSymptomDialog extends ConsumerStatefulWidget {
   const AddSymptomDialog({super.key});
@@ -26,7 +30,9 @@ class _AddSymptomDialogState extends ConsumerState<AddSymptomDialog> {
 
   void _submit() {
     if (_formKey.currentState!.validate()) {
-      ref.read(symptomTrackerNotifierProvider.notifier).addSymptom(
+      ref
+          .read(symptomTrackerNotifierProvider.notifier)
+          .addSymptom(
             _nameController.text,
             _severity.toInt(),
             _notesController.text,
@@ -44,25 +50,35 @@ class _AddSymptomDialogState extends ConsumerState<AddSymptomDialog> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            TextFormField(
+            AppTextField(
               controller: _nameController,
-              decoration: const InputDecoration(labelText: 'Symptom Name'),
-              validator: (value) =>
-                  (value == null || value.isEmpty) ? 'Please enter a name' : null,
+              labelText: 'Symptom Name',
+              validator:
+                  (value) =>
+                      (value == null || value.isEmpty)
+                          ? 'Please enter a name'
+                          : null,
             ),
-            const SizedBox(height: 16),
-            Text('Severity: ${_severity.toInt()}'),
-            Slider(
-              value: _severity,
-              min: 0,
-              max: 10,
-              divisions: 10,
-              label: _severity.round().toString(),
-              onChanged: (value) => setState(() => _severity = value),
+            const SizedBox(height: AppSpacing.medium),
+            Text(
+              'Severity: ${_severity.toInt()}',
+              style: Theme.of(context).textTheme.bodyMedium,
             ),
-            TextFormField(
+            SliderTheme(
+              data: SliderTheme.of(
+                context,
+              ).copyWith(trackShape: const GradientSliderTrackShape()),
+              child: Slider(
+                value: _severity,
+                max: 10,
+                divisions: 10,
+                label: _severity.round().toString(),
+                onChanged: (value) => setState(() => _severity = value),
+              ),
+            ),
+            AppTextField(
               controller: _notesController,
-              decoration: const InputDecoration(labelText: 'Notes (Optional)'),
+              labelText: 'Notes (Optional)',
             ),
           ],
         ),
@@ -72,10 +88,7 @@ class _AddSymptomDialogState extends ConsumerState<AddSymptomDialog> {
           onPressed: () => Navigator.of(context).pop(),
           child: const Text('Cancel'),
         ),
-        ElevatedButton(
-          onPressed: _submit,
-          child: const Text('Add'),
-        ),
+        PrimaryActionButton(onPressed: _submit, label: 'Add'),
       ],
     );
   }

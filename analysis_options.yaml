@@ -9,6 +9,10 @@
 # packages, and plugins designed to encourage good coding practices.
 include: package:flutter_lints/flutter.yaml
 
+analyzer:
+  plugins:
+    - riverpod
+
 linter:
   # The lint rules applied to this project can be customized in the
   # section below to disable rules from the `package:flutter_lints/flutter.yaml`
@@ -21,8 +25,33 @@ linter:
   # `// ignore_for_file: name_of_lint` syntax on the line or in the file
   # producing the lint.
   rules:
-    # avoid_print: false  # Uncomment to disable the `avoid_print` rule
-    # prefer_single_quotes: true  # Uncomment to enable the `prefer_single_quotes` rule
+    # ===== Style =====
+    prefer_single_quotes: true
+    prefer_final_locals: true
+    prefer_final_in_for_each: true
+    prefer_const_constructors: true
+    prefer_const_declarations: true
+    prefer_const_constructors_in_immutables: true
+    prefer_relative_imports: true
+    
+    # ===== Clarity & Readability =====
+    always_declare_return_types: true
+    always_put_required_named_parameters_first: true
+    avoid_redundant_argument_values: true
+    avoid_returning_null_for_void: true
+    avoid_unused_constructor_parameters: true
+    unnecessary_await_in_return: true
+    unnecessary_lambdas: true
+    unnecessary_parenthesis: true
+    
+    # ===== Safety & Robustness =====
+    use_build_context_synchronously: true
+    
+    # ===== Async =====
+    cancel_subscriptions: true
+    
+    # ===== Documentation =====
+    public_member_api_docs: false # Can be enabled for stricter documentation policy
 
 # Additional information about this file can be found at
 # https://dart.dev/guides/language/analysis-options

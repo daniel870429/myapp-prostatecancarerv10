@@ -1,89 +1,72 @@
-// integration_test/app_test.dart
-
-import 'dart:async';
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:mockito/mockito.dart';
-import 'package:myapp/data/data_providers.dart';
-import 'package:myapp/domain/entities/symptom_log.dart';
-import 'package:myapp/domain/repositories/symptom_repository.dart';
 import 'package:myapp/main.dart' as app;
-import 'package:firebase_auth/firebase_auth.dart';
-
-import '../test/auth_notifier_test.mocks.dart';
-
-// Re-using mocks from unit tests is fine, but for integration tests,
-// it's often clearer to define them here or in a dedicated file.
-class MockSymptomRepository extends Mock implements SymptomRepository {}
-class MockUser extends Mock implements User {
-  @override
-  String get uid => 'test_uid';
-}
+import 'package:myapp/presentation/features/psa_tracker/widgets/add_psa_log_dialog.dart';
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   group('end-to-end test', () {
-    late MockAuthRepository mockAuthRepository;
-    late MockSymptomRepository mockSymptomRepository;
+    testWidgets(
+      'tap through the app, add a symptom and a PSA log, and see them reflected on the dashboard',
+      (tester) async {
+        // Start the app.
+        app.main();
+        await tester.pumpAndSettle();
 
-    setUp(() {
-      mockAuthRepository = MockAuthRepository();
-      mockSymptomRepository = MockSymptomRepository();
-    });
+        // We assume the user is logged in.
 
-    testWidgets('login, add, and verify a symptom', (tester) async {
-      // Arrange:
-      // 1. Mock the auth state to simulate a logged-in user.
-      when(mockAuthRepository.authStateChanges).thenAnswer((_) => Stream.value(MockUser()));
+        // 1. Verify initial dashboard state
+        expect(find.text('守護之光儀表板'), findsOneWidget);
+        expect(find.text('您目前共記錄了 0 筆症狀。'), findsOneWidget);
+        expect(find.text('尚無 PSA 紀錄'), findsOneWidget);
 
-      // 2. Mock the symptom repository to return an empty list initially.
-      final symptomsController = StreamController<List<SymptomLog>>();
-      when(mockSymptomRepository.watchAllSymptomLogs(any)).thenAnswer((_) => symptomsController.stream);
+        // 2. Navigate to the Symptom Tracker page
+        await tester.tap(find.byIcon(Icons.assignment_outlined));
+        await tester.pumpAndSettle();
 
-      // 3. Mock the addSymptomLog method to do nothing but succeed.
-      when(mockSymptomRepository.addSymptomLog(any)).thenAnswer((_) async {});
+        // 3. Add a new symptom
+        await tester.tap(find.byType(FloatingActionButton));
+        await tester.pumpAndSettle();
+        await tester.enterText(
+          find.widgetWithText(TextFormField, 'Symptom Name'),
+          '輕微頭痛',
+        );
+        await tester.tap(find.text('Add'));
+        await tester.pumpAndSettle();
 
-      // Start the app with the mocked providers
-      await tester.pumpWidget(
-        ProviderScope(
-          overrides: [
-            authRepositoryProvider.overrideWithValue(mockAuthRepository),
-            symptomRepositoryProvider.overrideWithValue(mockSymptomRepository),
-          ],
-          child: app.MyApp(),
-        ),
-      );
+        // 4. Verify the new symptom is in the list
+        expect(find.text('輕微頭痛'), findsOneWidget);
 
-      // Act 1: Initial state
-      // Push an empty list to the stream to simulate the initial state.
-      symptomsController.add([]);
-      await tester.pumpAndSettle();
+        // 5. Navigate back to the Home page
+        await tester.tap(find.byIcon(Icons.home_outlined));
+        await tester.pumpAndSettle();
 
-      // Assert 1: Verify we are on the correct page and the list is empty.
-      expect(find.text('Symptom Tracker'), findsOneWidget);
-      expect(find.text('No symptoms logged yet.'), findsOneWidget);
+        // 6. Verify the dashboard has updated for symptoms
+        expect(find.text('您目前共記錄了 1 筆症狀。'), findsOneWidget);
 
-      // Act 2: Add a new symptom
-      await tester.tap(find.byIcon(Icons.add));
-      await tester.pumpAndSettle();
-      await tester.enterText(find.widgetWithText(TextFormField, 'Symptom Name'), 'Headache');
-      await tester.tap(find.widgetWithText(ElevatedButton, 'Add'));
-      
-      // After adding, push the new list to the stream to simulate the update.
-      final newSymptom = SymptomLog(id: 1, symptomName: 'Headache', severity: 5, recordedAt: DateTime.now(), userId: 'test_uid');
-      symptomsController.add([newSymptom]);
-      await tester.pumpAndSettle();
+        // 7. Add a new PSA log from the dashboard
+        await tester.tap(find.descendant(
+          of: find.text('PSA 趨勢'),
+          matching: find.byType(IconButton),
+        ));
+        await tester.pumpAndSettle();
 
-      // Assert 2: Verify the new symptom is now in the list.
-      expect(find.text('Headache'), findsOneWidget);
-      expect(find.text('Severity: 5'), findsOneWidget);
-      expect(find.text('No symptoms logged yet.'), findsNothing);
+        expect(find.byType(AddPsaLogDialog), findsOneWidget);
+        await tester.enterText(
+          find.widgetWithText(TextFormField, 'PSA 數值'),
+          '4.2',
+        );
+        await tester.tap(find.text('儲存'));
+        await tester.pumpAndSettle();
 
-      // Clean up the stream controller
-      await symptomsController.close();
-    });
+        // 8. Verify the new PSA log is reflected in the chart
+        // (A more robust test would inspect the chart data itself)
+        expect(find.text('尚無 PSA 紀錄'), findsNothing);
+        expect(find.byType(LineChart), findsOneWidget);
+      },
+    );
   });
 }

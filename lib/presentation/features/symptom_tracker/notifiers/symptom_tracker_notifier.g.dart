@@ -7,23 +7,20 @@ part of 'symptom_tracker_notifier.dart';
 // **************************************************************************
 
 String _$symptomTrackerNotifierHash() =>
-    r'934430444c3137c5eee1aa7f5ef82710564c1f9f';
+    r'49efdcb92d11151faddc7a841766e5b0d0b0e140';
 
 /// See also [SymptomTrackerNotifier].
 @ProviderFor(SymptomTrackerNotifier)
-final symptomTrackerNotifierProvider =
-    AutoDisposeStreamNotifierProvider<
-      SymptomTrackerNotifier,
-      List<SymptomLog>
-    >.internal(
-      SymptomTrackerNotifier.new,
-      name: r'symptomTrackerNotifierProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$symptomTrackerNotifierHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
+final symptomTrackerNotifierProvider = AutoDisposeStreamNotifierProvider<
+    SymptomTrackerNotifier, List<SymptomLog>>.internal(
+  SymptomTrackerNotifier.new,
+  name: r'symptomTrackerNotifierProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$symptomTrackerNotifierHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
 
 typedef _$SymptomTrackerNotifier = AutoDisposeStreamNotifier<List<SymptomLog>>;
 // ignore_for_file: type=lint

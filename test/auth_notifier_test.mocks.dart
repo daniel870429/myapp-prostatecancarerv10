@@ -27,17 +27,12 @@ import 'package:myapp/domain/repositories/auth_repository.dart' as _i2;
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockAuthRepository extends _i1.Mock implements _i2.AuthRepository {
-  MockAuthRepository() {
-    _i1.throwOnMissingStub(this);
-  }
-
   @override
-  _i3.Stream<_i4.User?> get authStateChanges =>
-      (super.noSuchMethod(
-            Invocation.getter(#authStateChanges),
-            returnValue: _i3.Stream<_i4.User?>.empty(),
-          )
-          as _i3.Stream<_i4.User?>);
+  _i3.Stream<_i4.User?> get authStateChanges => (super.noSuchMethod(
+        Invocation.getter(#authStateChanges),
+        returnValue: _i3.Stream<_i4.User?>.empty(),
+        returnValueForMissingStub: _i3.Stream<_i4.User?>.empty(),
+      ) as _i3.Stream<_i4.User?>);
 
   @override
   _i3.Future<void> signInWithEmailAndPassword({
@@ -45,14 +40,17 @@ class MockAuthRepository extends _i1.Mock implements _i2.AuthRepository {
     required String? password,
   }) =>
       (super.noSuchMethod(
-            Invocation.method(#signInWithEmailAndPassword, [], {
-              #email: email,
-              #password: password,
-            }),
-            returnValue: _i3.Future<void>.value(),
-            returnValueForMissingStub: _i3.Future<void>.value(),
-          )
-          as _i3.Future<void>);
+        Invocation.method(
+          #signInWithEmailAndPassword,
+          [],
+          {
+            #email: email,
+            #password: password,
+          },
+        ),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
 
   @override
   _i3.Future<void> createUserWithEmailAndPassword({
@@ -60,21 +58,25 @@ class MockAuthRepository extends _i1.Mock implements _i2.AuthRepository {
     required String? password,
   }) =>
       (super.noSuchMethod(
-            Invocation.method(#createUserWithEmailAndPassword, [], {
-              #email: email,
-              #password: password,
-            }),
-            returnValue: _i3.Future<void>.value(),
-            returnValueForMissingStub: _i3.Future<void>.value(),
-          )
-          as _i3.Future<void>);
+        Invocation.method(
+          #createUserWithEmailAndPassword,
+          [],
+          {
+            #email: email,
+            #password: password,
+          },
+        ),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
 
   @override
-  _i3.Future<void> signOut() =>
-      (super.noSuchMethod(
-            Invocation.method(#signOut, []),
-            returnValue: _i3.Future<void>.value(),
-            returnValueForMissingStub: _i3.Future<void>.value(),
-          )
-          as _i3.Future<void>);
+  _i3.Future<void> signOut() => (super.noSuchMethod(
+        Invocation.method(
+          #signOut,
+          [],
+        ),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
 }

@@ -1,5 +1,3 @@
-// test/auth_notifier_test.dart
-
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
@@ -11,7 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'auth_notifier_test.mocks.dart';
 
 // Generate mocks for the AuthRepository
-@GenerateMocks([AuthRepository])
+@GenerateNiceMocks([MockSpec<AuthRepository>()])
 void main() {
   group('AuthNotifier', () {
     late MockAuthRepository mockAuthRepository;
@@ -35,9 +33,13 @@ void main() {
     test('signOut calls repository signOut', () async {
       // Arrange
       // Stub the signOut method to complete successfully
-      when(mockAuthRepository.signOut()).thenAnswer((_) async {});
+      when(
+        mockAuthRepository.signOut(),
+      ).thenAnswer((_) async => Future.value());
       // Stub the authStateChanges stream
-      when(mockAuthRepository.authStateChanges).thenAnswer((_) => Stream.value(null));
+      when(
+        mockAuthRepository.authStateChanges,
+      ).thenAnswer((_) => Stream.value(null));
 
       // Act
       // Read the notifier from the container and call the method

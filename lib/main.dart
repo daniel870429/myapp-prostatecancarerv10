@@ -1,28 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import 'core/navigation/app_router.dart';
 import 'core/notification_service.dart';
 import 'core/theme/app_theme.dart';
 
 void main() async {
-  // Ensure that Flutter bindings are initialized before any async operations
   WidgetsFlutterBinding.ensureInitialized();
-  
-  // Initialize Firebase
+
+  // We are not initializing Firebase in the main app for now to allow
+  // integration tests to run with mocks.
   // await Firebase.initializeApp(
   //   options: DefaultFirebaseOptions.currentPlatform,
   // );
 
-  // Initialize the notification service
   await NotificationService.initialize();
-  
-  runApp(
-    // Wrap the entire app in a ProviderScope to enable Riverpod state management
-    const ProviderScope(
-      child: MyApp(),
-    ),
-  );
+
+  runApp(const ProviderScope(child: MyApp()));
 }
 
 class MyApp extends ConsumerWidget {
@@ -30,7 +23,6 @@ class MyApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Watch the router provider
     final router = ref.watch(goRouterProvider);
 
     return MaterialApp.router(

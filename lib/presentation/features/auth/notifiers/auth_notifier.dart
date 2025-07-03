@@ -4,41 +4,48 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../../data/data_providers.dart';
+import '../../../../domain/repositories/auth_repository.dart';
 
 part 'auth_notifier.g.dart';
 
 @Riverpod(keepAlive: true)
 class AuthNotifier extends _$AuthNotifier {
+  late final AuthRepository _authRepository;
+
   @override
   Stream<User?> build() {
-    // Listen to the auth state changes from the repository
-    return ref.watch(authRepositoryProvider).authStateChanges;
+    _authRepository = ref.watch(authRepositoryProvider);
+    return _authRepository.authStateChanges;
   }
 
   Future<void> signInWithEmailAndPassword(String email, String password) async {
-    final authRepository = ref.read(authRepositoryProvider);
     state = const AsyncValue.loading();
     try {
-      await authRepository.signInWithEmailAndPassword(email: email, password: password);
-      // The stream will automatically emit the new user, so we don't need to set state here.
+      await _authRepository.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
     } catch (e, s) {
       state = AsyncValue.error(e, s);
     }
   }
 
-  Future<void> createUserWithEmailAndPassword(String email, String password) async {
-    final authRepository = ref.read(authRepositoryProvider);
+  Future<void> createUserWithEmailAndPassword(
+    String email,
+    String password,
+  ) async {
     state = const AsyncValue.loading();
     try {
-      await authRepository.createUserWithEmailAndPassword(email: email, password: password);
-      // The stream will automatically emit the new user, so we don't need to set state here.
+      await _authRepository.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
     } catch (e, s) {
       state = AsyncValue.error(e, s);
     }
   }
 
   Future<void> signOut() async {
-    final authRepository = ref.read(authRepositoryProvider);
-    await authRepository.signOut();
+    await _authRepository.signOut();
   }
 }

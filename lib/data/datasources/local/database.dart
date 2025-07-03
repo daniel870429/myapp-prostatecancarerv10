@@ -1,17 +1,14 @@
 // lib/data/datasources/local/database.dart
 
 import 'package:drift/drift.dart';
-import 'package:drift/native.dart';
-import 'dart:io';
-import 'package:path_provider/path_provider.dart';
-import 'package:path/path.dart' as p;
-import 'package:sqlite3/sqlite3.dart';
-import 'package:sqlite3_flutter_libs/sqlite3_flutter_libs.dart';
+import 'database_web.dart'
+    if (dart.library.io) 'package:myapp/data/datasources/local/database_native.dart';
+import '../../../domain/entities/psa_log.dart' as domain;
 
 part 'database.g.dart';
 
-// Define the table for symptom logs, mirroring the domain entity.
-class SymptomLogs extends Table {
+// Renamed table to avoid name collision with domain entity
+class SymptomLogEntries extends Table {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get symptomName => text().withLength(min: 1, max: 100)();
   IntColumn get severity => integer().withDefault(const Constant(0))();
@@ -20,49 +17,86 @@ class SymptomLogs extends Table {
   TextColumn get userId => text()();
 }
 
-// DAO for SymptomLogs table
-@DriftAccessor(tables: [SymptomLogs])
-class SymptomLogDao extends DatabaseAccessor<AppDatabase> with _$SymptomLogDaoMixin {
+// Renamed table to avoid name collision with domain entity
+class PsaLogEntries extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  RealColumn get value => real()();
+  DateTimeColumn get recordedAt => dateTime()();
+  TextColumn get notes => text().nullable()();
+  TextColumn get userId => text()();
+  TextColumn get contextNotes => text().nullable()();
+  IntColumn get source =>
+      intEnum<domain.PsaLogSource>().withDefault(const Constant(0))();
+}
+
+@DriftAccessor(tables: [SymptomLogEntries])
+class SymptomLogDao extends DatabaseAccessor<AppDatabase>
+    with _$SymptomLogDaoMixin {
   SymptomLogDao(super.db);
 
-  // Watches for all logs for a specific user, ordered by date
-  Stream<List<SymptomLog>> watchAllLogs(String userId) {
-    return (select(symptomLogs)..where((tbl) => tbl.userId.equals(userId))..orderBy([(t) => OrderingTerm(expression: t.recordedAt, mode: OrderingMode.desc)])).watch();
+  // DAO now returns the unambiguous Drift-generated data class 'SymptomLogEntry'
+  Stream<List<SymptomLogEntry>> watchAllLogs(String userId) {
+    return (select(symptomLogEntries)
+          ..where((tbl) => tbl.userId.equals(userId))
+          ..orderBy([
+            (t) =>
+                OrderingTerm(expression: t.recordedAt, mode: OrderingMode.desc),
+          ]))
+        .watch();
   }
 
-  // Inserts a new log
-  Future<int> insertLog(SymptomLogsCompanion log) => into(symptomLogs).insert(log);
+  Future<int> insertLog(SymptomLogEntriesCompanion log) =>
+      into(symptomLogEntries).insert(log);
 
-  // Updates a log
-  Future<bool> updateLog(SymptomLogsCompanion log) => update(symptomLogs).replace(log);
+  Future<bool> updateLog(SymptomLogEntriesCompanion log) =>
+      update(symptomLogEntries).replace(log);
 
-  // Deletes a log
-  Future<int> deleteLog(int id) => (delete(symptomLogs)..where((tbl) => tbl.id.equals(id))).go();
+  Future<int> deleteLog(int id) =>
+      (delete(symptomLogEntries)..where((tbl) => tbl.id.equals(id))).go();
 }
 
-@DriftDatabase(tables: [SymptomLogs], daos: [SymptomLogDao])
+@DriftAccessor(tables: [PsaLogEntries])
+class PsaLogDao extends DatabaseAccessor<AppDatabase> with _$PsaLogDaoMixin {
+  PsaLogDao(super.db);
+
+  // DAO now returns the unambiguous Drift-generated data class 'PsaLogEntry'
+  Stream<List<PsaLogEntry>> watchAllPsaLogs(String userId) {
+    return (select(psaLogEntries)
+          ..where((tbl) => tbl.userId.equals(userId))
+          ..orderBy([
+            (t) =>
+                OrderingTerm(expression: t.recordedAt, mode: OrderingMode.desc),
+          ]))
+        .watch();
+  }
+
+  Future<int> insertPsaLog(PsaLogEntriesCompanion log) =>
+      into(psaLogEntries).insert(log);
+
+  Future<bool> updatePsaLog(PsaLogEntriesCompanion log) =>
+      update(psaLogEntries).replace(log);
+
+  Future<int> deletePsaLog(int id) =>
+      (delete(psaLogEntries)..where((tbl) => tbl.id.equals(id))).go();
+}
+
+@DriftDatabase(tables: [SymptomLogEntries, PsaLogEntries], daos: [SymptomLogDao, PsaLogDao])
 class AppDatabase extends _$AppDatabase {
-  AppDatabase() : super(_openConnection());
+  AppDatabase() : super(openConnection());
 
   @override
-  int get schemaVersion => 1;
-}
+  int get schemaVersion => 3;
 
-LazyDatabase _openConnection() {
-  return LazyDatabase(() async {
-    final dbFolder = await getApplicationDocumentsDirectory();
-    final file = File(p.join(dbFolder.path, 'db.sqlite'));
-
-    // Also work around limitations on old Android versions
-    if (Platform.isAndroid) {
-      await applyWorkaroundToOpenSqlite3OnOldAndroidVersions();
-    }
-
-    // Make sqlite3 pick a more suitable location for temporary files - the
-    // one from the system may be inaccessible due to sandboxing.
-    final cachebase = (await getTemporaryDirectory()).path;
-    sqlite3.tempDirectory = cachebase;
-
-    return NativeDatabase.createInBackground(file);
-  });
+  @override
+  MigrationStrategy get migration => MigrationStrategy(
+        onUpgrade: (m, from, to) async {
+          if (from < 3) {
+            // This migration logic needs to be adapted if table names change.
+            // For this fix, we assume the underlying SQL table name remains 'psa_logs'.
+            // Drift is smart about this if you only change the Dart class name.
+            await m.addColumn(psaLogEntries, psaLogEntries.contextNotes);
+            await m.addColumn(psaLogEntries, psaLogEntries.source);
+          }
+        },
+      );
 }

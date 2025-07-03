@@ -10,8 +10,8 @@ class SymptomLog {
     required this.symptomName,
     required this.severity,
     required this.recordedAt,
-    this.notes,
     required this.userId,
+    this.notes,
   });
 
   final int id;

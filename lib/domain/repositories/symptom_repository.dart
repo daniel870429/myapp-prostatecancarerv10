@@ -21,5 +21,5 @@ abstract class SymptomRepository {
   Future<void> updateSymptomLog(SymptomLog log);
 
   /// Deletes a symptom log by its ID.
-  Future<void> deleteSymptomLog(int id);
+  Future<void> deleteSymptomLog(int id, String userId);
 }

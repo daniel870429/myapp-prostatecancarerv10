@@ -1,27 +1,27 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'app_router.dart';
+part of 'psa_tracker_notifier.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$goRouterHash() => r'6bc4bd5428de21ec5217060a630dc911f3e59d95';
+String _$psaTrackerNotifierHash() =>
+    r'55aef007335f0157a0f95d10cd8068cdfe63f782';
 
-/// See also [goRouter].
-@ProviderFor(goRouter)
-final goRouterProvider = Provider<GoRouter>.internal(
-  goRouter,
-  name: r'goRouterProvider',
+/// See also [PsaTrackerNotifier].
+@ProviderFor(PsaTrackerNotifier)
+final psaTrackerNotifierProvider = AutoDisposeStreamNotifierProvider<
+    PsaTrackerNotifier, List<PsaLog>>.internal(
+  PsaTrackerNotifier.new,
+  name: r'psaTrackerNotifierProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$goRouterHash,
+      : _$psaTrackerNotifierHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef GoRouterRef = ProviderRef<GoRouter>;
+typedef _$PsaTrackerNotifier = AutoDisposeStreamNotifier<List<PsaLog>>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

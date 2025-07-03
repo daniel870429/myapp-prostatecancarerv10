@@ -1,8 +1,8 @@
-// lib/presentation/features/symptom_tracker/pages/symptom_tracker_page.dart
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import '../../../global_widgets/dialogs/confirmation_dialog.dart';
+
 import '../notifiers/symptom_tracker_notifier.dart';
 import '../widgets/add_symptom_dialog.dart';
 
@@ -11,51 +11,54 @@ class SymptomTrackerPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final symptomLogsAsync = ref.watch(symptomTrackerNotifierProvider);
+    final symptomsAsync = ref.watch(symptomTrackerNotifierProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Symptom Tracker'),
-      ),
-      body: symptomLogsAsync.when(
+      appBar: AppBar(title: const Text('症狀日誌')),
+      body: symptomsAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (err, stack) => Center(child: Text('Error: $err')),
-        data: (logs) {
-          if (logs.isEmpty) {
+        error: (err, stack) => Center(child: Text('發生錯誤: $err')),
+        data: (symptoms) {
+          if (symptoms.isEmpty) {
             return const Center(
-              child: Text('No symptoms logged yet.'),
+              child: Text(
+                '目前沒有任何症狀紀錄。\n點擊右下角按鈕新增第一筆紀錄。',
+                textAlign: TextAlign.center,
+              ),
             );
           }
           return ListView.builder(
-            itemCount: logs.length,
+            itemCount: symptoms.length,
             itemBuilder: (context, index) {
-              final log = logs[index];
+              final log = symptoms[index];
               return ListTile(
                 title: Text(log.symptomName),
-                subtitle: Text('Severity: ${log.severity}'),
-                trailing: Text(DateFormat.yMd().add_jm().format(log.recordedAt)),
-                onLongPress: () {
-                  // Simple deletion confirmation
-                  showDialog(
-                    context: context,
-                    builder: (context) => AlertDialog(
-                      title: const Text('Delete Symptom?'),
-                      content: const Text('Are you sure you want to delete this log?'),
-                      actions: [
-                        TextButton(
-                          onPressed: () => Navigator.of(context).pop(),
-                          child: const Text('Cancel'),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            ref.read(symptomTrackerNotifierProvider.notifier).deleteSymptom(log.id);
-                            Navigator.of(context).pop();
-                          },
-                          child: const Text('Delete'),
-                        ),
-                      ],
-                    ),
-                  );
+                subtitle: Text(
+                  '嚴重程度: ${log.severity} | ${DateFormat.yMMMd().add_jm().format(log.recordedAt)}',
+                ),
+                trailing: IconButton(
+                  icon: Icon(
+                    Icons.delete_outline,
+                    color: Theme.of(context).colorScheme.error,
+                  ),
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder:
+                          (_) => ConfirmationDialog(
+                            title: '確認刪除',
+                            content: '您確定要刪除「${log.symptomName}」這筆紀錄嗎？此操作無法復原。',
+                            onConfirm: () {
+                              ref
+                                  .read(symptomTrackerNotifierProvider.notifier)
+                                  .deleteSymptom(log.id);
+                            },
+                          ),
+                    );
+                  },
+                ),
+                onTap: () {
+                  // Optional: Implement edit functionality
                 },
               );
             },
