@@ -38,7 +38,7 @@ void main() {
       ).thenAnswer((_) async => Future.value());
       // Stub the authStateChanges stream
       when(
-        mockAuthRepository.authStateChanges,
+        mockAuthRepository.authStateChanges(),
       ).thenAnswer((_) => Stream.value(null));
 
       // Act

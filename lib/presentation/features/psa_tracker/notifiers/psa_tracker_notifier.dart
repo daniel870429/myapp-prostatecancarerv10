@@ -1,8 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../../data/data_providers.dart';
 import '../../../../domain/entities/psa_log.dart';
-import '../../auth/notifiers/auth_notifier.dart';
 
 part 'psa_tracker_notifier.g.dart';
 
@@ -10,44 +8,37 @@ part 'psa_tracker_notifier.g.dart';
 class PsaTrackerNotifier extends _$PsaTrackerNotifier {
   @override
   Stream<List<PsaLog>> build() {
-    final user = ref.watch(authNotifierProvider).value;
+    final user = ref.watch(authStateChangesProvider).asData?.value;
     if (user == null) {
       return Stream.value([]);
     }
-    final repository = ref.watch(psaRepositoryProvider);
-    return repository.watchAllPsaLogs(user.uid);
+    return ref.watch(psaRepositoryProvider).getPsaLogs(user.uid);
   }
 
-  Future<void> addPsaLog(double value, String? notes) async {
-    final user = ref.read(authNotifierProvider).value;
+  Future<void> addPsaLog({
+    required double value,
+    required DateTime timestamp,
+  }) async {
+    final user = ref.read(authStateChangesProvider).asData?.value;
     if (user == null) {
-      _handleError('User not authenticated', null, StackTrace.current);
       return;
     }
-
+    final repository = ref.read(psaRepositoryProvider);
     final newLog = PsaLog(
-      id: 0,
+      id: 0, // ID will be set by the database
       value: value,
-      recordedAt: DateTime.now(),
-      notes: notes,
+      recordedAt: timestamp,
       userId: user.uid,
     );
-
-    final repository = ref.read(psaRepositoryProvider);
-    try {
-      await repository.addPsaLog(newLog);
-    } catch (e, s) {
-      _handleError('Failed to add PSA log', e, s);
-      // rethrow;
-    }
+    await repository.addPsaLog(newLog);
   }
 
-  void _handleError(String message, Object? error, StackTrace stackTrace) {
-    debugPrint('PsaTrackerNotifier Error: $message');
-    if (error != null) {
-      debugPrint(error.toString());
+  Future<void> deletePsaLog(String id) async {
+    final user = ref.read(authStateChangesProvider).asData?.value;
+    if (user == null) {
+      return;
     }
-    debugPrint(stackTrace.toString());
-    state = AsyncError(error ?? message, stackTrace);
+    final repository = ref.read(psaRepositoryProvider);
+    await repository.deletePsaLog(id);
   }
 }

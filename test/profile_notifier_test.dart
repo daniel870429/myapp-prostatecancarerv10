@@ -5,7 +5,6 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:myapp/core/services/pdf_report_service.dart';
-import 'package:myapp/data/data_providers.dart';
 import 'package:myapp/domain/entities/symptom_log.dart';
 import 'package:myapp/presentation/features/profile/notifiers/profile_notifier.dart';
 import 'package:myapp/presentation/features/symptom_tracker/notifiers/symptom_tracker_notifier.dart';
@@ -32,9 +31,10 @@ void main() {
     testSymptomLogs = [
       SymptomLog(
         id: 1,
-        symptomName: 'Fatigue',
+        name: 'Fatigue',
         severity: 5,
-        recordedAt: DateTime.now(),
+        timestamp: DateTime.now(),
+        comments: 'no comments',
         userId: 'test_user',
       ),
     ];
@@ -45,8 +45,6 @@ void main() {
         symptomTrackerNotifierProvider.overrideWith(
           () => mockSymptomTrackerNotifier,
         ),
-        pdfReportServiceProvider.overrideWithValue(mockPdfReportService),
-        fileSharerServiceProvider.overrideWithValue(mockFileSharerService),
       ],
     );
   });
@@ -58,7 +56,8 @@ void main() {
   test('Initial state is AsyncData(null)', () {
     // 4. Test the initial state
     final listener = ProviderListener<AsyncValue<void>>();
-    container.listen(profileNotifierProvider, listener.call, fireImmediately: true);
+    container.listen(profileNotifierProvider, listener.call,
+        fireImmediately: true);
 
     // Assert
     expect(listener.states.first, const AsyncData<void>(null));
@@ -69,7 +68,8 @@ void main() {
         () async {
       // Arrange
       final listener = ProviderListener<AsyncValue<void>>();
-      container.listen(profileNotifierProvider, listener.call, fireImmediately: true);
+      container.listen(profileNotifierProvider, listener.call,
+          fireImmediately: true);
       final pdfData = Uint8List(0);
 
       // Stub dependencies for success
@@ -112,13 +112,15 @@ void main() {
     test('failure case: handles error from pdf service', () async {
       // Arrange
       final listener = ProviderListener<AsyncValue<void>>();
-      container.listen(profileNotifierProvider, listener.call, fireImmediately: true);
+      container.listen(profileNotifierProvider, listener.call,
+          fireImmediately: true);
       final exception = Exception('PDF generation failed');
 
       // Stub dependencies for failure
       when(mockSymptomTrackerNotifier.future)
           .thenAnswer((_) async => testSymptomLogs);
-      when(mockPdfReportService.generateSymptomReport(any)).thenThrow(exception);
+      when(mockPdfReportService.generateSymptomReport(any))
+          .thenThrow(exception);
 
       // Act
       await container

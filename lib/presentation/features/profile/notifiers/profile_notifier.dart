@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../../../data/data_providers.dart';
-import '../../symptom_tracker/notifiers/symptom_tracker_notifier.dart';
 
 part 'profile_notifier.g.dart';
 
@@ -27,20 +25,20 @@ class ProfileNotifier extends _$ProfileNotifier {
 
     try {
       // 1. Get the latest data by reading other providers.
-      final symptoms = await ref.read(symptomTrackerNotifierProvider.future);
+      // final symptoms = await ref.read(symptomTrackerNotifierProvider.future);
 
       // 2. Generate the PDF using the injected service.
-      final pdfService = ref.read(pdfReportServiceProvider);
-      final pdfData = await pdfService.generateSymptomReport(symptoms);
+      // final pdfService = ref.read(pdfReportServiceProvider);
+      // final pdfData = await pdfService.generateSymptomReport(symptoms);
 
       // 3. Save and share the file using the dedicated service.
-      final fileSharer = ref.read(fileSharerServiceProvider);
-      await fileSharer.saveAndShare(
-        'symptom_report.pdf',
-        pdfData,
-        '這是我的症狀日誌總結報告',
-        sharePositionOrigin: sharePositionOrigin,
-      );
+      // final fileSharer = ref.read(fileSharerServiceProvider);
+      // await fileSharer.saveAndShare(
+      //   'symptom_report.pdf',
+      //   pdfData,
+      //   '這是我的症狀日誌總結報告',
+      //   sharePositionOrigin: sharePositionOrigin,
+      // );
 
       onDone(); // Signal the UI to hide the loading indicator
       state = const AsyncValue.data(null); // Reset state to idle

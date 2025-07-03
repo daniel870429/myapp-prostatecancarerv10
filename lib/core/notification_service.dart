@@ -19,12 +19,12 @@ class NotificationService {
   static Future<void> showTestNotification() async {
     const AndroidNotificationDetails androidNotificationDetails =
         AndroidNotificationDetails(
-          'main_channel',
-          'Main Channel',
-          channelDescription: 'Main channel for notifications',
-          importance: Importance.max,
-          priority: Priority.high,
-        );
+      'main_channel',
+      'Main Channel',
+      channelDescription: 'Main channel for notifications',
+      importance: Importance.max,
+      priority: Priority.high,
+    );
     const NotificationDetails notificationDetails = NotificationDetails(
       android: androidNotificationDetails,
     );

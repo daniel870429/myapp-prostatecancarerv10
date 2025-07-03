@@ -30,12 +30,11 @@ class _AddSymptomDialogState extends ConsumerState<AddSymptomDialog> {
 
   void _submit() {
     if (_formKey.currentState!.validate()) {
-      ref
-          .read(symptomTrackerNotifierProvider.notifier)
-          .addSymptom(
-            _nameController.text,
-            _severity.toInt(),
-            _notesController.text,
+      ref.read(symptomTrackerNotifierProvider.notifier).addSymptomLog(
+            name: _nameController.text,
+            severity: _severity.toInt(),
+            timestamp: DateTime.now(),
+            comments: _notesController.text,
           );
       Navigator.of(context).pop();
     }
@@ -53,11 +52,9 @@ class _AddSymptomDialogState extends ConsumerState<AddSymptomDialog> {
             AppTextField(
               controller: _nameController,
               labelText: 'Symptom Name',
-              validator:
-                  (value) =>
-                      (value == null || value.isEmpty)
-                          ? 'Please enter a name'
-                          : null,
+              validator: (value) => (value == null || value.isEmpty)
+                  ? 'Please enter a name'
+                  : null,
             ),
             const SizedBox(height: AppSpacing.medium),
             Text(

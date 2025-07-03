@@ -7,7 +7,7 @@ part of 'symptom_tracker_notifier.dart';
 // **************************************************************************
 
 String _$symptomTrackerNotifierHash() =>
-    r'49efdcb92d11151faddc7a841766e5b0d0b0e140';
+    r'e959506db6ec5590887d3ac886c270c68813fa89';
 
 /// See also [SymptomTrackerNotifier].
 @ProviderFor(SymptomTrackerNotifier)

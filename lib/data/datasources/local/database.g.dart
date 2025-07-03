@@ -3,20 +3,12 @@
 part of 'database.dart';
 
 // ignore_for_file: type=lint
-mixin _$SymptomLogDaoMixin on DatabaseAccessor<AppDatabase> {
-  $SymptomLogEntriesTable get symptomLogEntries =>
-      attachedDatabase.symptomLogEntries;
-}
-mixin _$PsaLogDaoMixin on DatabaseAccessor<AppDatabase> {
-  $PsaLogEntriesTable get psaLogEntries => attachedDatabase.psaLogEntries;
-}
-
-class $SymptomLogEntriesTable extends SymptomLogEntries
-    with TableInfo<$SymptomLogEntriesTable, SymptomLogEntry> {
+class $SymptomLogsTable extends SymptomLogs
+    with TableInfo<$SymptomLogsTable, SymptomLogDbEntity> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $SymptomLogEntriesTable(this.attachedDatabase, [this._alias]);
+  $SymptomLogsTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
@@ -26,84 +18,68 @@ class $SymptomLogEntriesTable extends SymptomLogEntries
       requiredDuringInsert: false,
       defaultConstraints:
           GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
-  static const VerificationMeta _symptomNameMeta =
-      const VerificationMeta('symptomName');
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
   @override
-  late final GeneratedColumn<String> symptomName = GeneratedColumn<String>(
-      'symptom_name', aliasedName, false,
-      additionalChecks:
-          GeneratedColumn.checkTextLength(minTextLength: 1, maxTextLength: 100),
-      type: DriftSqlType.string,
-      requiredDuringInsert: true);
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+      'name', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
   static const VerificationMeta _severityMeta =
       const VerificationMeta('severity');
   @override
   late final GeneratedColumn<int> severity = GeneratedColumn<int>(
       'severity', aliasedName, false,
-      type: DriftSqlType.int,
-      requiredDuringInsert: false,
-      defaultValue: const Constant(0));
-  static const VerificationMeta _recordedAtMeta =
-      const VerificationMeta('recordedAt');
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  static const VerificationMeta _timestampMeta =
+      const VerificationMeta('timestamp');
   @override
-  late final GeneratedColumn<DateTime> recordedAt = GeneratedColumn<DateTime>(
-      'recorded_at', aliasedName, false,
+  late final GeneratedColumn<DateTime> timestamp = GeneratedColumn<DateTime>(
+      'timestamp', aliasedName, false,
       type: DriftSqlType.dateTime, requiredDuringInsert: true);
-  static const VerificationMeta _notesMeta = const VerificationMeta('notes');
+  static const VerificationMeta _commentsMeta =
+      const VerificationMeta('comments');
   @override
-  late final GeneratedColumn<String> notes = GeneratedColumn<String>(
-      'notes', aliasedName, true,
-      type: DriftSqlType.string, requiredDuringInsert: false);
-  static const VerificationMeta _userIdMeta = const VerificationMeta('userId');
-  @override
-  late final GeneratedColumn<String> userId = GeneratedColumn<String>(
-      'user_id', aliasedName, false,
+  late final GeneratedColumn<String> comments = GeneratedColumn<String>(
+      'comments', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
   @override
   List<GeneratedColumn> get $columns =>
-      [id, symptomName, severity, recordedAt, notes, userId];
+      [id, name, severity, timestamp, comments];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
-  static const String $name = 'symptom_log_entries';
+  static const String $name = 'symptom_logs';
   @override
-  VerificationContext validateIntegrity(Insertable<SymptomLogEntry> instance,
+  VerificationContext validateIntegrity(Insertable<SymptomLogDbEntity> instance,
       {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     }
-    if (data.containsKey('symptom_name')) {
+    if (data.containsKey('name')) {
       context.handle(
-          _symptomNameMeta,
-          symptomName.isAcceptableOrUnknown(
-              data['symptom_name']!, _symptomNameMeta));
+          _nameMeta, name.isAcceptableOrUnknown(data['name']!, _nameMeta));
     } else if (isInserting) {
-      context.missing(_symptomNameMeta);
+      context.missing(_nameMeta);
     }
     if (data.containsKey('severity')) {
       context.handle(_severityMeta,
           severity.isAcceptableOrUnknown(data['severity']!, _severityMeta));
-    }
-    if (data.containsKey('recorded_at')) {
-      context.handle(
-          _recordedAtMeta,
-          recordedAt.isAcceptableOrUnknown(
-              data['recorded_at']!, _recordedAtMeta));
     } else if (isInserting) {
-      context.missing(_recordedAtMeta);
+      context.missing(_severityMeta);
     }
-    if (data.containsKey('notes')) {
-      context.handle(
-          _notesMeta, notes.isAcceptableOrUnknown(data['notes']!, _notesMeta));
-    }
-    if (data.containsKey('user_id')) {
-      context.handle(_userIdMeta,
-          userId.isAcceptableOrUnknown(data['user_id']!, _userIdMeta));
+    if (data.containsKey('timestamp')) {
+      context.handle(_timestampMeta,
+          timestamp.isAcceptableOrUnknown(data['timestamp']!, _timestampMeta));
     } else if (isInserting) {
-      context.missing(_userIdMeta);
+      context.missing(_timestampMeta);
+    }
+    if (data.containsKey('comments')) {
+      context.handle(_commentsMeta,
+          comments.isAcceptableOrUnknown(data['comments']!, _commentsMeta));
+    } else if (isInserting) {
+      context.missing(_commentsMeta);
     }
     return context;
   }
@@ -111,80 +87,71 @@ class $SymptomLogEntriesTable extends SymptomLogEntries
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  SymptomLogEntry map(Map<String, dynamic> data, {String? tablePrefix}) {
+  SymptomLogDbEntity map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return SymptomLogEntry(
+    return SymptomLogDbEntity(
       id: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
-      symptomName: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}symptom_name'])!,
+      name: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
       severity: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}severity'])!,
-      recordedAt: attachedDatabase.typeMapping
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}recorded_at'])!,
-      notes: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}notes']),
-      userId: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}user_id'])!,
+      timestamp: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}timestamp'])!,
+      comments: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}comments'])!,
     );
   }
 
   @override
-  $SymptomLogEntriesTable createAlias(String alias) {
-    return $SymptomLogEntriesTable(attachedDatabase, alias);
+  $SymptomLogsTable createAlias(String alias) {
+    return $SymptomLogsTable(attachedDatabase, alias);
   }
 }
 
-class SymptomLogEntry extends DataClass implements Insertable<SymptomLogEntry> {
+class SymptomLogDbEntity extends DataClass
+    implements Insertable<SymptomLogDbEntity> {
   final int id;
-  final String symptomName;
+  final String name;
   final int severity;
-  final DateTime recordedAt;
-  final String? notes;
-  final String userId;
-  const SymptomLogEntry(
+  final DateTime timestamp;
+  final String comments;
+  const SymptomLogDbEntity(
       {required this.id,
-      required this.symptomName,
+      required this.name,
       required this.severity,
-      required this.recordedAt,
-      this.notes,
-      required this.userId});
+      required this.timestamp,
+      required this.comments});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
-    map['symptom_name'] = Variable<String>(symptomName);
+    map['name'] = Variable<String>(name);
     map['severity'] = Variable<int>(severity);
-    map['recorded_at'] = Variable<DateTime>(recordedAt);
-    if (!nullToAbsent || notes != null) {
-      map['notes'] = Variable<String>(notes);
-    }
-    map['user_id'] = Variable<String>(userId);
+    map['timestamp'] = Variable<DateTime>(timestamp);
+    map['comments'] = Variable<String>(comments);
     return map;
   }
 
-  SymptomLogEntriesCompanion toCompanion(bool nullToAbsent) {
-    return SymptomLogEntriesCompanion(
+  SymptomLogsCompanion toCompanion(bool nullToAbsent) {
+    return SymptomLogsCompanion(
       id: Value(id),
-      symptomName: Value(symptomName),
+      name: Value(name),
       severity: Value(severity),
-      recordedAt: Value(recordedAt),
-      notes:
-          notes == null && nullToAbsent ? const Value.absent() : Value(notes),
-      userId: Value(userId),
+      timestamp: Value(timestamp),
+      comments: Value(comments),
     );
   }
 
-  factory SymptomLogEntry.fromJson(Map<String, dynamic> json,
+  factory SymptomLogDbEntity.fromJson(Map<String, dynamic> json,
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return SymptomLogEntry(
+    return SymptomLogDbEntity(
       id: serializer.fromJson<int>(json['id']),
-      symptomName: serializer.fromJson<String>(json['symptomName']),
+      name: serializer.fromJson<String>(json['name']),
       severity: serializer.fromJson<int>(json['severity']),
-      recordedAt: serializer.fromJson<DateTime>(json['recordedAt']),
-      notes: serializer.fromJson<String?>(json['notes']),
-      userId: serializer.fromJson<String>(json['userId']),
+      timestamp: serializer.fromJson<DateTime>(json['timestamp']),
+      comments: serializer.fromJson<String>(json['comments']),
     );
   }
   @override
@@ -192,127 +159,112 @@ class SymptomLogEntry extends DataClass implements Insertable<SymptomLogEntry> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
-      'symptomName': serializer.toJson<String>(symptomName),
+      'name': serializer.toJson<String>(name),
       'severity': serializer.toJson<int>(severity),
-      'recordedAt': serializer.toJson<DateTime>(recordedAt),
-      'notes': serializer.toJson<String?>(notes),
-      'userId': serializer.toJson<String>(userId),
+      'timestamp': serializer.toJson<DateTime>(timestamp),
+      'comments': serializer.toJson<String>(comments),
     };
   }
 
-  SymptomLogEntry copyWith(
+  SymptomLogDbEntity copyWith(
           {int? id,
-          String? symptomName,
+          String? name,
           int? severity,
-          DateTime? recordedAt,
-          Value<String?> notes = const Value.absent(),
-          String? userId}) =>
-      SymptomLogEntry(
+          DateTime? timestamp,
+          String? comments}) =>
+      SymptomLogDbEntity(
         id: id ?? this.id,
-        symptomName: symptomName ?? this.symptomName,
+        name: name ?? this.name,
         severity: severity ?? this.severity,
-        recordedAt: recordedAt ?? this.recordedAt,
-        notes: notes.present ? notes.value : this.notes,
-        userId: userId ?? this.userId,
+        timestamp: timestamp ?? this.timestamp,
+        comments: comments ?? this.comments,
       );
-  SymptomLogEntry copyWithCompanion(SymptomLogEntriesCompanion data) {
-    return SymptomLogEntry(
+  SymptomLogDbEntity copyWithCompanion(SymptomLogsCompanion data) {
+    return SymptomLogDbEntity(
       id: data.id.present ? data.id.value : this.id,
-      symptomName:
-          data.symptomName.present ? data.symptomName.value : this.symptomName,
+      name: data.name.present ? data.name.value : this.name,
       severity: data.severity.present ? data.severity.value : this.severity,
-      recordedAt:
-          data.recordedAt.present ? data.recordedAt.value : this.recordedAt,
-      notes: data.notes.present ? data.notes.value : this.notes,
-      userId: data.userId.present ? data.userId.value : this.userId,
+      timestamp: data.timestamp.present ? data.timestamp.value : this.timestamp,
+      comments: data.comments.present ? data.comments.value : this.comments,
     );
   }
 
   @override
   String toString() {
-    return (StringBuffer('SymptomLogEntry(')
+    return (StringBuffer('SymptomLogDbEntity(')
           ..write('id: $id, ')
-          ..write('symptomName: $symptomName, ')
+          ..write('name: $name, ')
           ..write('severity: $severity, ')
-          ..write('recordedAt: $recordedAt, ')
-          ..write('notes: $notes, ')
-          ..write('userId: $userId')
+          ..write('timestamp: $timestamp, ')
+          ..write('comments: $comments')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode =>
-      Object.hash(id, symptomName, severity, recordedAt, notes, userId);
+  int get hashCode => Object.hash(id, name, severity, timestamp, comments);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is SymptomLogEntry &&
+      (other is SymptomLogDbEntity &&
           other.id == this.id &&
-          other.symptomName == this.symptomName &&
+          other.name == this.name &&
           other.severity == this.severity &&
-          other.recordedAt == this.recordedAt &&
-          other.notes == this.notes &&
-          other.userId == this.userId);
+          other.timestamp == this.timestamp &&
+          other.comments == this.comments);
 }
 
-class SymptomLogEntriesCompanion extends UpdateCompanion<SymptomLogEntry> {
+class SymptomLogsCompanion extends UpdateCompanion<SymptomLogDbEntity> {
   final Value<int> id;
-  final Value<String> symptomName;
+  final Value<String> name;
   final Value<int> severity;
-  final Value<DateTime> recordedAt;
-  final Value<String?> notes;
-  final Value<String> userId;
-  const SymptomLogEntriesCompanion({
+  final Value<DateTime> timestamp;
+  final Value<String> comments;
+  const SymptomLogsCompanion({
     this.id = const Value.absent(),
-    this.symptomName = const Value.absent(),
+    this.name = const Value.absent(),
     this.severity = const Value.absent(),
-    this.recordedAt = const Value.absent(),
-    this.notes = const Value.absent(),
-    this.userId = const Value.absent(),
+    this.timestamp = const Value.absent(),
+    this.comments = const Value.absent(),
   });
-  SymptomLogEntriesCompanion.insert({
+  SymptomLogsCompanion.insert({
     this.id = const Value.absent(),
-    required String symptomName,
-    this.severity = const Value.absent(),
-    required DateTime recordedAt,
-    this.notes = const Value.absent(),
-    required String userId,
-  })  : symptomName = Value(symptomName),
-        recordedAt = Value(recordedAt),
-        userId = Value(userId);
-  static Insertable<SymptomLogEntry> custom({
+    required String name,
+    required int severity,
+    required DateTime timestamp,
+    required String comments,
+  })  : name = Value(name),
+        severity = Value(severity),
+        timestamp = Value(timestamp),
+        comments = Value(comments);
+  static Insertable<SymptomLogDbEntity> custom({
     Expression<int>? id,
-    Expression<String>? symptomName,
+    Expression<String>? name,
     Expression<int>? severity,
-    Expression<DateTime>? recordedAt,
-    Expression<String>? notes,
-    Expression<String>? userId,
+    Expression<DateTime>? timestamp,
+    Expression<String>? comments,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
-      if (symptomName != null) 'symptom_name': symptomName,
+      if (name != null) 'name': name,
       if (severity != null) 'severity': severity,
-      if (recordedAt != null) 'recorded_at': recordedAt,
-      if (notes != null) 'notes': notes,
-      if (userId != null) 'user_id': userId,
+      if (timestamp != null) 'timestamp': timestamp,
+      if (comments != null) 'comments': comments,
     });
   }
 
-  SymptomLogEntriesCompanion copyWith(
+  SymptomLogsCompanion copyWith(
       {Value<int>? id,
-      Value<String>? symptomName,
+      Value<String>? name,
       Value<int>? severity,
-      Value<DateTime>? recordedAt,
-      Value<String?>? notes,
-      Value<String>? userId}) {
-    return SymptomLogEntriesCompanion(
+      Value<DateTime>? timestamp,
+      Value<String>? comments}) {
+    return SymptomLogsCompanion(
       id: id ?? this.id,
-      symptomName: symptomName ?? this.symptomName,
+      name: name ?? this.name,
       severity: severity ?? this.severity,
-      recordedAt: recordedAt ?? this.recordedAt,
-      notes: notes ?? this.notes,
-      userId: userId ?? this.userId,
+      timestamp: timestamp ?? this.timestamp,
+      comments: comments ?? this.comments,
     );
   }
 
@@ -322,44 +274,40 @@ class SymptomLogEntriesCompanion extends UpdateCompanion<SymptomLogEntry> {
     if (id.present) {
       map['id'] = Variable<int>(id.value);
     }
-    if (symptomName.present) {
-      map['symptom_name'] = Variable<String>(symptomName.value);
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
     }
     if (severity.present) {
       map['severity'] = Variable<int>(severity.value);
     }
-    if (recordedAt.present) {
-      map['recorded_at'] = Variable<DateTime>(recordedAt.value);
+    if (timestamp.present) {
+      map['timestamp'] = Variable<DateTime>(timestamp.value);
     }
-    if (notes.present) {
-      map['notes'] = Variable<String>(notes.value);
-    }
-    if (userId.present) {
-      map['user_id'] = Variable<String>(userId.value);
+    if (comments.present) {
+      map['comments'] = Variable<String>(comments.value);
     }
     return map;
   }
 
   @override
   String toString() {
-    return (StringBuffer('SymptomLogEntriesCompanion(')
+    return (StringBuffer('SymptomLogsCompanion(')
           ..write('id: $id, ')
-          ..write('symptomName: $symptomName, ')
+          ..write('name: $name, ')
           ..write('severity: $severity, ')
-          ..write('recordedAt: $recordedAt, ')
-          ..write('notes: $notes, ')
-          ..write('userId: $userId')
+          ..write('timestamp: $timestamp, ')
+          ..write('comments: $comments')
           ..write(')'))
         .toString();
   }
 }
 
-class $PsaLogEntriesTable extends PsaLogEntries
-    with TableInfo<$PsaLogEntriesTable, PsaLogEntry> {
+class $PsaLogsTable extends PsaLogs
+    with TableInfo<$PsaLogsTable, PsaLogDbEntity> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $PsaLogEntriesTable(this.attachedDatabase, [this._alias]);
+  $PsaLogsTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
@@ -380,16 +328,16 @@ class $PsaLogEntriesTable extends PsaLogEntries
   late final GeneratedColumn<DateTime> recordedAt = GeneratedColumn<DateTime>(
       'recorded_at', aliasedName, false,
       type: DriftSqlType.dateTime, requiredDuringInsert: true);
-  static const VerificationMeta _notesMeta = const VerificationMeta('notes');
-  @override
-  late final GeneratedColumn<String> notes = GeneratedColumn<String>(
-      'notes', aliasedName, true,
-      type: DriftSqlType.string, requiredDuringInsert: false);
   static const VerificationMeta _userIdMeta = const VerificationMeta('userId');
   @override
   late final GeneratedColumn<String> userId = GeneratedColumn<String>(
       'user_id', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _notesMeta = const VerificationMeta('notes');
+  @override
+  late final GeneratedColumn<String> notes = GeneratedColumn<String>(
+      'notes', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
   static const VerificationMeta _contextNotesMeta =
       const VerificationMeta('contextNotes');
   @override
@@ -397,23 +345,20 @@ class $PsaLogEntriesTable extends PsaLogEntries
       'context_notes', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
   @override
-  late final GeneratedColumnWithTypeConverter<domain.PsaLogSource, int> source =
+  late final GeneratedColumnWithTypeConverter<PsaLogSource, int> source =
       GeneratedColumn<int>('source', aliasedName, false,
-              type: DriftSqlType.int,
-              requiredDuringInsert: false,
-              defaultValue: const Constant(0))
-          .withConverter<domain.PsaLogSource>(
-              $PsaLogEntriesTable.$convertersource);
+              type: DriftSqlType.int, requiredDuringInsert: true)
+          .withConverter<PsaLogSource>($PsaLogsTable.$convertersource);
   @override
   List<GeneratedColumn> get $columns =>
-      [id, value, recordedAt, notes, userId, contextNotes, source];
+      [id, value, recordedAt, userId, notes, contextNotes, source];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
-  static const String $name = 'psa_log_entries';
+  static const String $name = 'psa_logs';
   @override
-  VerificationContext validateIntegrity(Insertable<PsaLogEntry> instance,
+  VerificationContext validateIntegrity(Insertable<PsaLogDbEntity> instance,
       {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
@@ -434,15 +379,15 @@ class $PsaLogEntriesTable extends PsaLogEntries
     } else if (isInserting) {
       context.missing(_recordedAtMeta);
     }
-    if (data.containsKey('notes')) {
-      context.handle(
-          _notesMeta, notes.isAcceptableOrUnknown(data['notes']!, _notesMeta));
-    }
     if (data.containsKey('user_id')) {
       context.handle(_userIdMeta,
           userId.isAcceptableOrUnknown(data['user_id']!, _userIdMeta));
     } else if (isInserting) {
       context.missing(_userIdMeta);
+    }
+    if (data.containsKey('notes')) {
+      context.handle(
+          _notesMeta, notes.isAcceptableOrUnknown(data['notes']!, _notesMeta));
     }
     if (data.containsKey('context_notes')) {
       context.handle(
@@ -456,50 +401,50 @@ class $PsaLogEntriesTable extends PsaLogEntries
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  PsaLogEntry map(Map<String, dynamic> data, {String? tablePrefix}) {
+  PsaLogDbEntity map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return PsaLogEntry(
+    return PsaLogDbEntity(
       id: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
       value: attachedDatabase.typeMapping
           .read(DriftSqlType.double, data['${effectivePrefix}value'])!,
       recordedAt: attachedDatabase.typeMapping
           .read(DriftSqlType.dateTime, data['${effectivePrefix}recorded_at'])!,
-      notes: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}notes']),
       userId: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}user_id'])!,
+      notes: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}notes']),
       contextNotes: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}context_notes']),
-      source: $PsaLogEntriesTable.$convertersource.fromSql(attachedDatabase
+      source: $PsaLogsTable.$convertersource.fromSql(attachedDatabase
           .typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}source'])!),
     );
   }
 
   @override
-  $PsaLogEntriesTable createAlias(String alias) {
-    return $PsaLogEntriesTable(attachedDatabase, alias);
+  $PsaLogsTable createAlias(String alias) {
+    return $PsaLogsTable(attachedDatabase, alias);
   }
 
-  static JsonTypeConverter2<domain.PsaLogSource, int, int> $convertersource =
-      const EnumIndexConverter<domain.PsaLogSource>(domain.PsaLogSource.values);
+  static TypeConverter<PsaLogSource, int> $convertersource =
+      const PsaLogSourceConverter();
 }
 
-class PsaLogEntry extends DataClass implements Insertable<PsaLogEntry> {
+class PsaLogDbEntity extends DataClass implements Insertable<PsaLogDbEntity> {
   final int id;
   final double value;
   final DateTime recordedAt;
-  final String? notes;
   final String userId;
+  final String? notes;
   final String? contextNotes;
-  final domain.PsaLogSource source;
-  const PsaLogEntry(
+  final PsaLogSource source;
+  const PsaLogDbEntity(
       {required this.id,
       required this.value,
       required this.recordedAt,
-      this.notes,
       required this.userId,
+      this.notes,
       this.contextNotes,
       required this.source});
   @override
@@ -508,28 +453,28 @@ class PsaLogEntry extends DataClass implements Insertable<PsaLogEntry> {
     map['id'] = Variable<int>(id);
     map['value'] = Variable<double>(value);
     map['recorded_at'] = Variable<DateTime>(recordedAt);
+    map['user_id'] = Variable<String>(userId);
     if (!nullToAbsent || notes != null) {
       map['notes'] = Variable<String>(notes);
     }
-    map['user_id'] = Variable<String>(userId);
     if (!nullToAbsent || contextNotes != null) {
       map['context_notes'] = Variable<String>(contextNotes);
     }
     {
       map['source'] =
-          Variable<int>($PsaLogEntriesTable.$convertersource.toSql(source));
+          Variable<int>($PsaLogsTable.$convertersource.toSql(source));
     }
     return map;
   }
 
-  PsaLogEntriesCompanion toCompanion(bool nullToAbsent) {
-    return PsaLogEntriesCompanion(
+  PsaLogsCompanion toCompanion(bool nullToAbsent) {
+    return PsaLogsCompanion(
       id: Value(id),
       value: Value(value),
       recordedAt: Value(recordedAt),
+      userId: Value(userId),
       notes:
           notes == null && nullToAbsent ? const Value.absent() : Value(notes),
-      userId: Value(userId),
       contextNotes: contextNotes == null && nullToAbsent
           ? const Value.absent()
           : Value(contextNotes),
@@ -537,18 +482,17 @@ class PsaLogEntry extends DataClass implements Insertable<PsaLogEntry> {
     );
   }
 
-  factory PsaLogEntry.fromJson(Map<String, dynamic> json,
+  factory PsaLogDbEntity.fromJson(Map<String, dynamic> json,
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return PsaLogEntry(
+    return PsaLogDbEntity(
       id: serializer.fromJson<int>(json['id']),
       value: serializer.fromJson<double>(json['value']),
       recordedAt: serializer.fromJson<DateTime>(json['recordedAt']),
-      notes: serializer.fromJson<String?>(json['notes']),
       userId: serializer.fromJson<String>(json['userId']),
+      notes: serializer.fromJson<String?>(json['notes']),
       contextNotes: serializer.fromJson<String?>(json['contextNotes']),
-      source: $PsaLogEntriesTable.$convertersource
-          .fromJson(serializer.fromJson<int>(json['source'])),
+      source: serializer.fromJson<PsaLogSource>(json['source']),
     );
   }
   @override
@@ -558,40 +502,39 @@ class PsaLogEntry extends DataClass implements Insertable<PsaLogEntry> {
       'id': serializer.toJson<int>(id),
       'value': serializer.toJson<double>(value),
       'recordedAt': serializer.toJson<DateTime>(recordedAt),
-      'notes': serializer.toJson<String?>(notes),
       'userId': serializer.toJson<String>(userId),
+      'notes': serializer.toJson<String?>(notes),
       'contextNotes': serializer.toJson<String?>(contextNotes),
-      'source': serializer
-          .toJson<int>($PsaLogEntriesTable.$convertersource.toJson(source)),
+      'source': serializer.toJson<PsaLogSource>(source),
     };
   }
 
-  PsaLogEntry copyWith(
+  PsaLogDbEntity copyWith(
           {int? id,
           double? value,
           DateTime? recordedAt,
-          Value<String?> notes = const Value.absent(),
           String? userId,
+          Value<String?> notes = const Value.absent(),
           Value<String?> contextNotes = const Value.absent(),
-          domain.PsaLogSource? source}) =>
-      PsaLogEntry(
+          PsaLogSource? source}) =>
+      PsaLogDbEntity(
         id: id ?? this.id,
         value: value ?? this.value,
         recordedAt: recordedAt ?? this.recordedAt,
-        notes: notes.present ? notes.value : this.notes,
         userId: userId ?? this.userId,
+        notes: notes.present ? notes.value : this.notes,
         contextNotes:
             contextNotes.present ? contextNotes.value : this.contextNotes,
         source: source ?? this.source,
       );
-  PsaLogEntry copyWithCompanion(PsaLogEntriesCompanion data) {
-    return PsaLogEntry(
+  PsaLogDbEntity copyWithCompanion(PsaLogsCompanion data) {
+    return PsaLogDbEntity(
       id: data.id.present ? data.id.value : this.id,
       value: data.value.present ? data.value.value : this.value,
       recordedAt:
           data.recordedAt.present ? data.recordedAt.value : this.recordedAt,
-      notes: data.notes.present ? data.notes.value : this.notes,
       userId: data.userId.present ? data.userId.value : this.userId,
+      notes: data.notes.present ? data.notes.value : this.notes,
       contextNotes: data.contextNotes.present
           ? data.contextNotes.value
           : this.contextNotes,
@@ -601,12 +544,12 @@ class PsaLogEntry extends DataClass implements Insertable<PsaLogEntry> {
 
   @override
   String toString() {
-    return (StringBuffer('PsaLogEntry(')
+    return (StringBuffer('PsaLogDbEntity(')
           ..write('id: $id, ')
           ..write('value: $value, ')
           ..write('recordedAt: $recordedAt, ')
-          ..write('notes: $notes, ')
           ..write('userId: $userId, ')
+          ..write('notes: $notes, ')
           ..write('contextNotes: $contextNotes, ')
           ..write('source: $source')
           ..write(')'))
@@ -615,54 +558,55 @@ class PsaLogEntry extends DataClass implements Insertable<PsaLogEntry> {
 
   @override
   int get hashCode =>
-      Object.hash(id, value, recordedAt, notes, userId, contextNotes, source);
+      Object.hash(id, value, recordedAt, userId, notes, contextNotes, source);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is PsaLogEntry &&
+      (other is PsaLogDbEntity &&
           other.id == this.id &&
           other.value == this.value &&
           other.recordedAt == this.recordedAt &&
-          other.notes == this.notes &&
           other.userId == this.userId &&
+          other.notes == this.notes &&
           other.contextNotes == this.contextNotes &&
           other.source == this.source);
 }
 
-class PsaLogEntriesCompanion extends UpdateCompanion<PsaLogEntry> {
+class PsaLogsCompanion extends UpdateCompanion<PsaLogDbEntity> {
   final Value<int> id;
   final Value<double> value;
   final Value<DateTime> recordedAt;
-  final Value<String?> notes;
   final Value<String> userId;
+  final Value<String?> notes;
   final Value<String?> contextNotes;
-  final Value<domain.PsaLogSource> source;
-  const PsaLogEntriesCompanion({
+  final Value<PsaLogSource> source;
+  const PsaLogsCompanion({
     this.id = const Value.absent(),
     this.value = const Value.absent(),
     this.recordedAt = const Value.absent(),
-    this.notes = const Value.absent(),
     this.userId = const Value.absent(),
+    this.notes = const Value.absent(),
     this.contextNotes = const Value.absent(),
     this.source = const Value.absent(),
   });
-  PsaLogEntriesCompanion.insert({
+  PsaLogsCompanion.insert({
     this.id = const Value.absent(),
     required double value,
     required DateTime recordedAt,
-    this.notes = const Value.absent(),
     required String userId,
+    this.notes = const Value.absent(),
     this.contextNotes = const Value.absent(),
-    this.source = const Value.absent(),
+    required PsaLogSource source,
   })  : value = Value(value),
         recordedAt = Value(recordedAt),
-        userId = Value(userId);
-  static Insertable<PsaLogEntry> custom({
+        userId = Value(userId),
+        source = Value(source);
+  static Insertable<PsaLogDbEntity> custom({
     Expression<int>? id,
     Expression<double>? value,
     Expression<DateTime>? recordedAt,
-    Expression<String>? notes,
     Expression<String>? userId,
+    Expression<String>? notes,
     Expression<String>? contextNotes,
     Expression<int>? source,
   }) {
@@ -670,27 +614,27 @@ class PsaLogEntriesCompanion extends UpdateCompanion<PsaLogEntry> {
       if (id != null) 'id': id,
       if (value != null) 'value': value,
       if (recordedAt != null) 'recorded_at': recordedAt,
-      if (notes != null) 'notes': notes,
       if (userId != null) 'user_id': userId,
+      if (notes != null) 'notes': notes,
       if (contextNotes != null) 'context_notes': contextNotes,
       if (source != null) 'source': source,
     });
   }
 
-  PsaLogEntriesCompanion copyWith(
+  PsaLogsCompanion copyWith(
       {Value<int>? id,
       Value<double>? value,
       Value<DateTime>? recordedAt,
-      Value<String?>? notes,
       Value<String>? userId,
+      Value<String?>? notes,
       Value<String?>? contextNotes,
-      Value<domain.PsaLogSource>? source}) {
-    return PsaLogEntriesCompanion(
+      Value<PsaLogSource>? source}) {
+    return PsaLogsCompanion(
       id: id ?? this.id,
       value: value ?? this.value,
       recordedAt: recordedAt ?? this.recordedAt,
-      notes: notes ?? this.notes,
       userId: userId ?? this.userId,
+      notes: notes ?? this.notes,
       contextNotes: contextNotes ?? this.contextNotes,
       source: source ?? this.source,
     );
@@ -708,30 +652,30 @@ class PsaLogEntriesCompanion extends UpdateCompanion<PsaLogEntry> {
     if (recordedAt.present) {
       map['recorded_at'] = Variable<DateTime>(recordedAt.value);
     }
-    if (notes.present) {
-      map['notes'] = Variable<String>(notes.value);
-    }
     if (userId.present) {
       map['user_id'] = Variable<String>(userId.value);
+    }
+    if (notes.present) {
+      map['notes'] = Variable<String>(notes.value);
     }
     if (contextNotes.present) {
       map['context_notes'] = Variable<String>(contextNotes.value);
     }
     if (source.present) {
-      map['source'] = Variable<int>(
-          $PsaLogEntriesTable.$convertersource.toSql(source.value));
+      map['source'] =
+          Variable<int>($PsaLogsTable.$convertersource.toSql(source.value));
     }
     return map;
   }
 
   @override
   String toString() {
-    return (StringBuffer('PsaLogEntriesCompanion(')
+    return (StringBuffer('PsaLogsCompanion(')
           ..write('id: $id, ')
           ..write('value: $value, ')
           ..write('recordedAt: $recordedAt, ')
-          ..write('notes: $notes, ')
           ..write('userId: $userId, ')
+          ..write('notes: $notes, ')
           ..write('contextNotes: $contextNotes, ')
           ..write('source: $source')
           ..write(')'))
@@ -742,41 +686,37 @@ class PsaLogEntriesCompanion extends UpdateCompanion<PsaLogEntry> {
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
-  late final $SymptomLogEntriesTable symptomLogEntries =
-      $SymptomLogEntriesTable(this);
-  late final $PsaLogEntriesTable psaLogEntries = $PsaLogEntriesTable(this);
+  late final $SymptomLogsTable symptomLogs = $SymptomLogsTable(this);
+  late final $PsaLogsTable psaLogs = $PsaLogsTable(this);
   late final SymptomLogDao symptomLogDao = SymptomLogDao(this as AppDatabase);
   late final PsaLogDao psaLogDao = PsaLogDao(this as AppDatabase);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
-  List<DatabaseSchemaEntity> get allSchemaEntities =>
-      [symptomLogEntries, psaLogEntries];
+  List<DatabaseSchemaEntity> get allSchemaEntities => [symptomLogs, psaLogs];
 }
 
-typedef $$SymptomLogEntriesTableCreateCompanionBuilder
-    = SymptomLogEntriesCompanion Function({
+typedef $$SymptomLogsTableCreateCompanionBuilder = SymptomLogsCompanion
+    Function({
   Value<int> id,
-  required String symptomName,
-  Value<int> severity,
-  required DateTime recordedAt,
-  Value<String?> notes,
-  required String userId,
+  required String name,
+  required int severity,
+  required DateTime timestamp,
+  required String comments,
 });
-typedef $$SymptomLogEntriesTableUpdateCompanionBuilder
-    = SymptomLogEntriesCompanion Function({
+typedef $$SymptomLogsTableUpdateCompanionBuilder = SymptomLogsCompanion
+    Function({
   Value<int> id,
-  Value<String> symptomName,
+  Value<String> name,
   Value<int> severity,
-  Value<DateTime> recordedAt,
-  Value<String?> notes,
-  Value<String> userId,
+  Value<DateTime> timestamp,
+  Value<String> comments,
 });
 
-class $$SymptomLogEntriesTableFilterComposer
-    extends Composer<_$AppDatabase, $SymptomLogEntriesTable> {
-  $$SymptomLogEntriesTableFilterComposer({
+class $$SymptomLogsTableFilterComposer
+    extends Composer<_$AppDatabase, $SymptomLogsTable> {
+  $$SymptomLogsTableFilterComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
@@ -786,25 +726,22 @@ class $$SymptomLogEntriesTableFilterComposer
   ColumnFilters<int> get id => $composableBuilder(
       column: $table.id, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<String> get symptomName => $composableBuilder(
-      column: $table.symptomName, builder: (column) => ColumnFilters(column));
+  ColumnFilters<String> get name => $composableBuilder(
+      column: $table.name, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<int> get severity => $composableBuilder(
       column: $table.severity, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<DateTime> get recordedAt => $composableBuilder(
-      column: $table.recordedAt, builder: (column) => ColumnFilters(column));
+  ColumnFilters<DateTime> get timestamp => $composableBuilder(
+      column: $table.timestamp, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<String> get notes => $composableBuilder(
-      column: $table.notes, builder: (column) => ColumnFilters(column));
-
-  ColumnFilters<String> get userId => $composableBuilder(
-      column: $table.userId, builder: (column) => ColumnFilters(column));
+  ColumnFilters<String> get comments => $composableBuilder(
+      column: $table.comments, builder: (column) => ColumnFilters(column));
 }
 
-class $$SymptomLogEntriesTableOrderingComposer
-    extends Composer<_$AppDatabase, $SymptomLogEntriesTable> {
-  $$SymptomLogEntriesTableOrderingComposer({
+class $$SymptomLogsTableOrderingComposer
+    extends Composer<_$AppDatabase, $SymptomLogsTable> {
+  $$SymptomLogsTableOrderingComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
@@ -814,25 +751,22 @@ class $$SymptomLogEntriesTableOrderingComposer
   ColumnOrderings<int> get id => $composableBuilder(
       column: $table.id, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<String> get symptomName => $composableBuilder(
-      column: $table.symptomName, builder: (column) => ColumnOrderings(column));
+  ColumnOrderings<String> get name => $composableBuilder(
+      column: $table.name, builder: (column) => ColumnOrderings(column));
 
   ColumnOrderings<int> get severity => $composableBuilder(
       column: $table.severity, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<DateTime> get recordedAt => $composableBuilder(
-      column: $table.recordedAt, builder: (column) => ColumnOrderings(column));
+  ColumnOrderings<DateTime> get timestamp => $composableBuilder(
+      column: $table.timestamp, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<String> get notes => $composableBuilder(
-      column: $table.notes, builder: (column) => ColumnOrderings(column));
-
-  ColumnOrderings<String> get userId => $composableBuilder(
-      column: $table.userId, builder: (column) => ColumnOrderings(column));
+  ColumnOrderings<String> get comments => $composableBuilder(
+      column: $table.comments, builder: (column) => ColumnOrderings(column));
 }
 
-class $$SymptomLogEntriesTableAnnotationComposer
-    extends Composer<_$AppDatabase, $SymptomLogEntriesTable> {
-  $$SymptomLogEntriesTableAnnotationComposer({
+class $$SymptomLogsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $SymptomLogsTable> {
+  $$SymptomLogsTableAnnotationComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
@@ -842,80 +776,71 @@ class $$SymptomLogEntriesTableAnnotationComposer
   GeneratedColumn<int> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
 
-  GeneratedColumn<String> get symptomName => $composableBuilder(
-      column: $table.symptomName, builder: (column) => column);
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
 
   GeneratedColumn<int> get severity =>
       $composableBuilder(column: $table.severity, builder: (column) => column);
 
-  GeneratedColumn<DateTime> get recordedAt => $composableBuilder(
-      column: $table.recordedAt, builder: (column) => column);
+  GeneratedColumn<DateTime> get timestamp =>
+      $composableBuilder(column: $table.timestamp, builder: (column) => column);
 
-  GeneratedColumn<String> get notes =>
-      $composableBuilder(column: $table.notes, builder: (column) => column);
-
-  GeneratedColumn<String> get userId =>
-      $composableBuilder(column: $table.userId, builder: (column) => column);
+  GeneratedColumn<String> get comments =>
+      $composableBuilder(column: $table.comments, builder: (column) => column);
 }
 
-class $$SymptomLogEntriesTableTableManager extends RootTableManager<
+class $$SymptomLogsTableTableManager extends RootTableManager<
     _$AppDatabase,
-    $SymptomLogEntriesTable,
-    SymptomLogEntry,
-    $$SymptomLogEntriesTableFilterComposer,
-    $$SymptomLogEntriesTableOrderingComposer,
-    $$SymptomLogEntriesTableAnnotationComposer,
-    $$SymptomLogEntriesTableCreateCompanionBuilder,
-    $$SymptomLogEntriesTableUpdateCompanionBuilder,
+    $SymptomLogsTable,
+    SymptomLogDbEntity,
+    $$SymptomLogsTableFilterComposer,
+    $$SymptomLogsTableOrderingComposer,
+    $$SymptomLogsTableAnnotationComposer,
+    $$SymptomLogsTableCreateCompanionBuilder,
+    $$SymptomLogsTableUpdateCompanionBuilder,
     (
-      SymptomLogEntry,
-      BaseReferences<_$AppDatabase, $SymptomLogEntriesTable, SymptomLogEntry>
+      SymptomLogDbEntity,
+      BaseReferences<_$AppDatabase, $SymptomLogsTable, SymptomLogDbEntity>
     ),
-    SymptomLogEntry,
+    SymptomLogDbEntity,
     PrefetchHooks Function()> {
-  $$SymptomLogEntriesTableTableManager(
-      _$AppDatabase db, $SymptomLogEntriesTable table)
+  $$SymptomLogsTableTableManager(_$AppDatabase db, $SymptomLogsTable table)
       : super(TableManagerState(
           db: db,
           table: table,
           createFilteringComposer: () =>
-              $$SymptomLogEntriesTableFilterComposer($db: db, $table: table),
+              $$SymptomLogsTableFilterComposer($db: db, $table: table),
           createOrderingComposer: () =>
-              $$SymptomLogEntriesTableOrderingComposer($db: db, $table: table),
+              $$SymptomLogsTableOrderingComposer($db: db, $table: table),
           createComputedFieldComposer: () =>
-              $$SymptomLogEntriesTableAnnotationComposer(
-                  $db: db, $table: table),
+              $$SymptomLogsTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback: ({
             Value<int> id = const Value.absent(),
-            Value<String> symptomName = const Value.absent(),
+            Value<String> name = const Value.absent(),
             Value<int> severity = const Value.absent(),
-            Value<DateTime> recordedAt = const Value.absent(),
-            Value<String?> notes = const Value.absent(),
-            Value<String> userId = const Value.absent(),
+            Value<DateTime> timestamp = const Value.absent(),
+            Value<String> comments = const Value.absent(),
           }) =>
-              SymptomLogEntriesCompanion(
+              SymptomLogsCompanion(
             id: id,
-            symptomName: symptomName,
+            name: name,
             severity: severity,
-            recordedAt: recordedAt,
-            notes: notes,
-            userId: userId,
+            timestamp: timestamp,
+            comments: comments,
           ),
           createCompanionCallback: ({
             Value<int> id = const Value.absent(),
-            required String symptomName,
-            Value<int> severity = const Value.absent(),
-            required DateTime recordedAt,
-            Value<String?> notes = const Value.absent(),
-            required String userId,
+            required String name,
+            required int severity,
+            required DateTime timestamp,
+            required String comments,
           }) =>
-              SymptomLogEntriesCompanion.insert(
+              SymptomLogsCompanion.insert(
             id: id,
-            symptomName: symptomName,
+            name: name,
             severity: severity,
-            recordedAt: recordedAt,
-            notes: notes,
-            userId: userId,
+            timestamp: timestamp,
+            comments: comments,
           ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
@@ -924,45 +849,43 @@ class $$SymptomLogEntriesTableTableManager extends RootTableManager<
         ));
 }
 
-typedef $$SymptomLogEntriesTableProcessedTableManager = ProcessedTableManager<
+typedef $$SymptomLogsTableProcessedTableManager = ProcessedTableManager<
     _$AppDatabase,
-    $SymptomLogEntriesTable,
-    SymptomLogEntry,
-    $$SymptomLogEntriesTableFilterComposer,
-    $$SymptomLogEntriesTableOrderingComposer,
-    $$SymptomLogEntriesTableAnnotationComposer,
-    $$SymptomLogEntriesTableCreateCompanionBuilder,
-    $$SymptomLogEntriesTableUpdateCompanionBuilder,
+    $SymptomLogsTable,
+    SymptomLogDbEntity,
+    $$SymptomLogsTableFilterComposer,
+    $$SymptomLogsTableOrderingComposer,
+    $$SymptomLogsTableAnnotationComposer,
+    $$SymptomLogsTableCreateCompanionBuilder,
+    $$SymptomLogsTableUpdateCompanionBuilder,
     (
-      SymptomLogEntry,
-      BaseReferences<_$AppDatabase, $SymptomLogEntriesTable, SymptomLogEntry>
+      SymptomLogDbEntity,
+      BaseReferences<_$AppDatabase, $SymptomLogsTable, SymptomLogDbEntity>
     ),
-    SymptomLogEntry,
+    SymptomLogDbEntity,
     PrefetchHooks Function()>;
-typedef $$PsaLogEntriesTableCreateCompanionBuilder = PsaLogEntriesCompanion
-    Function({
+typedef $$PsaLogsTableCreateCompanionBuilder = PsaLogsCompanion Function({
   Value<int> id,
   required double value,
   required DateTime recordedAt,
-  Value<String?> notes,
   required String userId,
+  Value<String?> notes,
   Value<String?> contextNotes,
-  Value<domain.PsaLogSource> source,
+  required PsaLogSource source,
 });
-typedef $$PsaLogEntriesTableUpdateCompanionBuilder = PsaLogEntriesCompanion
-    Function({
+typedef $$PsaLogsTableUpdateCompanionBuilder = PsaLogsCompanion Function({
   Value<int> id,
   Value<double> value,
   Value<DateTime> recordedAt,
-  Value<String?> notes,
   Value<String> userId,
+  Value<String?> notes,
   Value<String?> contextNotes,
-  Value<domain.PsaLogSource> source,
+  Value<PsaLogSource> source,
 });
 
-class $$PsaLogEntriesTableFilterComposer
-    extends Composer<_$AppDatabase, $PsaLogEntriesTable> {
-  $$PsaLogEntriesTableFilterComposer({
+class $$PsaLogsTableFilterComposer
+    extends Composer<_$AppDatabase, $PsaLogsTable> {
+  $$PsaLogsTableFilterComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
@@ -978,24 +901,24 @@ class $$PsaLogEntriesTableFilterComposer
   ColumnFilters<DateTime> get recordedAt => $composableBuilder(
       column: $table.recordedAt, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<String> get notes => $composableBuilder(
-      column: $table.notes, builder: (column) => ColumnFilters(column));
-
   ColumnFilters<String> get userId => $composableBuilder(
       column: $table.userId, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get notes => $composableBuilder(
+      column: $table.notes, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<String> get contextNotes => $composableBuilder(
       column: $table.contextNotes, builder: (column) => ColumnFilters(column));
 
-  ColumnWithTypeConverterFilters<domain.PsaLogSource, domain.PsaLogSource, int>
-      get source => $composableBuilder(
+  ColumnWithTypeConverterFilters<PsaLogSource, PsaLogSource, int> get source =>
+      $composableBuilder(
           column: $table.source,
           builder: (column) => ColumnWithTypeConverterFilters(column));
 }
 
-class $$PsaLogEntriesTableOrderingComposer
-    extends Composer<_$AppDatabase, $PsaLogEntriesTable> {
-  $$PsaLogEntriesTableOrderingComposer({
+class $$PsaLogsTableOrderingComposer
+    extends Composer<_$AppDatabase, $PsaLogsTable> {
+  $$PsaLogsTableOrderingComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
@@ -1011,11 +934,11 @@ class $$PsaLogEntriesTableOrderingComposer
   ColumnOrderings<DateTime> get recordedAt => $composableBuilder(
       column: $table.recordedAt, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<String> get notes => $composableBuilder(
-      column: $table.notes, builder: (column) => ColumnOrderings(column));
-
   ColumnOrderings<String> get userId => $composableBuilder(
       column: $table.userId, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get notes => $composableBuilder(
+      column: $table.notes, builder: (column) => ColumnOrderings(column));
 
   ColumnOrderings<String> get contextNotes => $composableBuilder(
       column: $table.contextNotes,
@@ -1025,9 +948,9 @@ class $$PsaLogEntriesTableOrderingComposer
       column: $table.source, builder: (column) => ColumnOrderings(column));
 }
 
-class $$PsaLogEntriesTableAnnotationComposer
-    extends Composer<_$AppDatabase, $PsaLogEntriesTable> {
-  $$PsaLogEntriesTableAnnotationComposer({
+class $$PsaLogsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $PsaLogsTable> {
+  $$PsaLogsTableAnnotationComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
@@ -1043,59 +966,59 @@ class $$PsaLogEntriesTableAnnotationComposer
   GeneratedColumn<DateTime> get recordedAt => $composableBuilder(
       column: $table.recordedAt, builder: (column) => column);
 
-  GeneratedColumn<String> get notes =>
-      $composableBuilder(column: $table.notes, builder: (column) => column);
-
   GeneratedColumn<String> get userId =>
       $composableBuilder(column: $table.userId, builder: (column) => column);
+
+  GeneratedColumn<String> get notes =>
+      $composableBuilder(column: $table.notes, builder: (column) => column);
 
   GeneratedColumn<String> get contextNotes => $composableBuilder(
       column: $table.contextNotes, builder: (column) => column);
 
-  GeneratedColumnWithTypeConverter<domain.PsaLogSource, int> get source =>
+  GeneratedColumnWithTypeConverter<PsaLogSource, int> get source =>
       $composableBuilder(column: $table.source, builder: (column) => column);
 }
 
-class $$PsaLogEntriesTableTableManager extends RootTableManager<
+class $$PsaLogsTableTableManager extends RootTableManager<
     _$AppDatabase,
-    $PsaLogEntriesTable,
-    PsaLogEntry,
-    $$PsaLogEntriesTableFilterComposer,
-    $$PsaLogEntriesTableOrderingComposer,
-    $$PsaLogEntriesTableAnnotationComposer,
-    $$PsaLogEntriesTableCreateCompanionBuilder,
-    $$PsaLogEntriesTableUpdateCompanionBuilder,
+    $PsaLogsTable,
+    PsaLogDbEntity,
+    $$PsaLogsTableFilterComposer,
+    $$PsaLogsTableOrderingComposer,
+    $$PsaLogsTableAnnotationComposer,
+    $$PsaLogsTableCreateCompanionBuilder,
+    $$PsaLogsTableUpdateCompanionBuilder,
     (
-      PsaLogEntry,
-      BaseReferences<_$AppDatabase, $PsaLogEntriesTable, PsaLogEntry>
+      PsaLogDbEntity,
+      BaseReferences<_$AppDatabase, $PsaLogsTable, PsaLogDbEntity>
     ),
-    PsaLogEntry,
+    PsaLogDbEntity,
     PrefetchHooks Function()> {
-  $$PsaLogEntriesTableTableManager(_$AppDatabase db, $PsaLogEntriesTable table)
+  $$PsaLogsTableTableManager(_$AppDatabase db, $PsaLogsTable table)
       : super(TableManagerState(
           db: db,
           table: table,
           createFilteringComposer: () =>
-              $$PsaLogEntriesTableFilterComposer($db: db, $table: table),
+              $$PsaLogsTableFilterComposer($db: db, $table: table),
           createOrderingComposer: () =>
-              $$PsaLogEntriesTableOrderingComposer($db: db, $table: table),
+              $$PsaLogsTableOrderingComposer($db: db, $table: table),
           createComputedFieldComposer: () =>
-              $$PsaLogEntriesTableAnnotationComposer($db: db, $table: table),
+              $$PsaLogsTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback: ({
             Value<int> id = const Value.absent(),
             Value<double> value = const Value.absent(),
             Value<DateTime> recordedAt = const Value.absent(),
-            Value<String?> notes = const Value.absent(),
             Value<String> userId = const Value.absent(),
+            Value<String?> notes = const Value.absent(),
             Value<String?> contextNotes = const Value.absent(),
-            Value<domain.PsaLogSource> source = const Value.absent(),
+            Value<PsaLogSource> source = const Value.absent(),
           }) =>
-              PsaLogEntriesCompanion(
+              PsaLogsCompanion(
             id: id,
             value: value,
             recordedAt: recordedAt,
-            notes: notes,
             userId: userId,
+            notes: notes,
             contextNotes: contextNotes,
             source: source,
           ),
@@ -1103,17 +1026,17 @@ class $$PsaLogEntriesTableTableManager extends RootTableManager<
             Value<int> id = const Value.absent(),
             required double value,
             required DateTime recordedAt,
-            Value<String?> notes = const Value.absent(),
             required String userId,
+            Value<String?> notes = const Value.absent(),
             Value<String?> contextNotes = const Value.absent(),
-            Value<domain.PsaLogSource> source = const Value.absent(),
+            required PsaLogSource source,
           }) =>
-              PsaLogEntriesCompanion.insert(
+              PsaLogsCompanion.insert(
             id: id,
             value: value,
             recordedAt: recordedAt,
-            notes: notes,
             userId: userId,
+            notes: notes,
             contextNotes: contextNotes,
             source: source,
           ),
@@ -1124,27 +1047,34 @@ class $$PsaLogEntriesTableTableManager extends RootTableManager<
         ));
 }
 
-typedef $$PsaLogEntriesTableProcessedTableManager = ProcessedTableManager<
+typedef $$PsaLogsTableProcessedTableManager = ProcessedTableManager<
     _$AppDatabase,
-    $PsaLogEntriesTable,
-    PsaLogEntry,
-    $$PsaLogEntriesTableFilterComposer,
-    $$PsaLogEntriesTableOrderingComposer,
-    $$PsaLogEntriesTableAnnotationComposer,
-    $$PsaLogEntriesTableCreateCompanionBuilder,
-    $$PsaLogEntriesTableUpdateCompanionBuilder,
+    $PsaLogsTable,
+    PsaLogDbEntity,
+    $$PsaLogsTableFilterComposer,
+    $$PsaLogsTableOrderingComposer,
+    $$PsaLogsTableAnnotationComposer,
+    $$PsaLogsTableCreateCompanionBuilder,
+    $$PsaLogsTableUpdateCompanionBuilder,
     (
-      PsaLogEntry,
-      BaseReferences<_$AppDatabase, $PsaLogEntriesTable, PsaLogEntry>
+      PsaLogDbEntity,
+      BaseReferences<_$AppDatabase, $PsaLogsTable, PsaLogDbEntity>
     ),
-    PsaLogEntry,
+    PsaLogDbEntity,
     PrefetchHooks Function()>;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
   $AppDatabaseManager(this._db);
-  $$SymptomLogEntriesTableTableManager get symptomLogEntries =>
-      $$SymptomLogEntriesTableTableManager(_db, _db.symptomLogEntries);
-  $$PsaLogEntriesTableTableManager get psaLogEntries =>
-      $$PsaLogEntriesTableTableManager(_db, _db.psaLogEntries);
+  $$SymptomLogsTableTableManager get symptomLogs =>
+      $$SymptomLogsTableTableManager(_db, _db.symptomLogs);
+  $$PsaLogsTableTableManager get psaLogs =>
+      $$PsaLogsTableTableManager(_db, _db.psaLogs);
+}
+
+mixin _$SymptomLogDaoMixin on DatabaseAccessor<AppDatabase> {
+  $SymptomLogsTable get symptomLogs => attachedDatabase.symptomLogs;
+}
+mixin _$PsaLogDaoMixin on DatabaseAccessor<AppDatabase> {
+  $PsaLogsTable get psaLogs => attachedDatabase.psaLogs;
 }

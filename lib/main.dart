@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'core/navigation/app_router.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'core/notification_service.dart';
+import 'firebase_options.dart';
+import 'core/navigation/app_router.dart';
 import 'core/theme/app_theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // We are not initializing Firebase in the main app for now to allow
-  // integration tests to run with mocks.
-  // await Firebase.initializeApp(
-  //   options: DefaultFirebaseOptions.currentPlatform,
-  // );
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 
   await NotificationService.initialize();
 

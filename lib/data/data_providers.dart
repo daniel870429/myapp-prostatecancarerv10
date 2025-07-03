@@ -1,91 +1,71 @@
-// lib/data/data_providers.dart
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_ai/firebase_ai.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
-
-import '../core/services/file_sharer_service.dart';
-import '../core/services/pdf_report_service.dart';
-import '../domain/repositories/auth_repository.dart';
-import '../domain/repositories/psa_repository.dart';
-import '../domain/repositories/symptom_repository.dart';
 import 'datasources/local/database.dart';
 import 'repositories/auth_repository_impl.dart';
 import 'repositories/psa_repository_impl.dart';
 import 'repositories/symptom_repository_impl.dart';
+import '../domain/entities/psa_log.dart';
+import '../domain/entities/symptom_log.dart';
+import '../domain/repositories/auth_repository.dart';
+import '../domain/repositories/psa_repository.dart';
+import '../domain/repositories/symptom_repository.dart';
 
-part 'data_providers.g.dart';
+// This file contains providers for the data layer of the application.
+// It is used to provide instances of repositories and other data sources
+// to the rest of the application.
 
-@riverpod
-FirebaseAuth firebaseAuth(Ref ref) {
+// -- Firebase --
+final firebaseAuthProvider = Provider<FirebaseAuth>((ref) {
   return FirebaseAuth.instance;
-}
+});
 
-@riverpod
-FirebaseFirestore firebaseFirestore(Ref ref) {
+final firestoreProvider = Provider<FirebaseFirestore>((ref) {
   return FirebaseFirestore.instance;
-}
+});
 
-@riverpod
-FirebaseStorage firebaseStorage(Ref ref) {
-  return FirebaseStorage.instance;
-}
-
-@riverpod
-AppDatabase appDatabase(Ref ref) {
+// -- Database --
+final databaseProvider = Provider<AppDatabase>((ref) {
   return AppDatabase();
-}
+});
 
-@riverpod
-GenerativeModel generativeModel(Ref ref) {
-  // Initialize the Gemini Developer API backend service
-  // and create a `GenerativeModel` instance.
-  return FirebaseAI.googleAI().generativeModel(
-    model: 'gemini-1.5-flash', // Updated model name
-    generationConfig: GenerationConfig(
-      temperature: 0.4,
-      topK: 32,
-      topP: 1,
-      maxOutputTokens: 4096,
-    ),
-  );
-}
+// -- Repositories --
+final authRepositoryProvider = Provider<AuthRepository>((ref) {
+  final firebaseAuth = ref.watch(firebaseAuthProvider);
+  final firestore = ref.watch(firestoreProvider);
+  return AuthRepositoryImpl(firebaseAuth, firestore);
+});
 
-// --- DAOs ---
-@riverpod
-SymptomLogDao symptomLogDao(Ref ref) =>
-    ref.watch(appDatabaseProvider).symptomLogDao;
+final symptomRepositoryProvider = Provider<SymptomRepository>((ref) {
+  final firestore = ref.watch(firestoreProvider);
+  return SymptomRepositoryImpl(firestore);
+});
 
-@riverpod
-PsaLogDao psaLogDao(Ref ref) => ref.watch(appDatabaseProvider).psaLogDao;
+final psaRepositoryProvider = Provider<PsaRepository>((ref) {
+  final firestore = ref.watch(firestoreProvider);
+  return PsaRepositoryImpl(firestore);
+});
 
-// --- Repositories ---
-@riverpod
-AuthRepository authRepository(Ref ref) =>
-    AuthRepositoryImpl(ref.watch(firebaseAuthProvider));
+// -- Data Streams --
+final authStateChangesProvider = StreamProvider<User?>((ref) {
+  final authRepository = ref.watch(authRepositoryProvider);
+  return authRepository.authStateChanges();
+});
 
-@riverpod
-SymptomRepository symptomRepository(Ref ref) => SymptomRepositoryImpl(
-      ref.watch(symptomLogDaoProvider),
-      ref.watch(firebaseFirestoreProvider),
-    );
+final symptomsStreamProvider = StreamProvider<List<SymptomLog>>((ref) {
+  final symptomRepository = ref.watch(symptomRepositoryProvider);
+  final user = ref.watch(authStateChangesProvider).asData?.value;
+  if (user != null) {
+    return symptomRepository.watchAllSymptomLogs(user.uid);
+  }
+  return Stream.value([]);
+});
 
-@riverpod
-PsaRepository psaRepository(Ref ref) => PsaRepositoryImpl(
-      ref.watch(psaLogDaoProvider),
-      ref.watch(firebaseFirestoreProvider),
-    );
-
-// --- App Services ---
-@riverpod
-PdfReportService pdfReportService(Ref ref) {
-  return PdfReportService();
-}
-
-@riverpod
-FileSharerService fileSharerService(Ref ref) {
-  return FileSharerService();
-}
+final psaLogsStreamProvider = StreamProvider<List<PsaLog>>((ref) {
+  final psaRepository = ref.watch(psaRepositoryProvider);
+  final user = ref.watch(authStateChangesProvider).asData?.value;
+  if (user != null) {
+    return psaRepository.getPsaLogs(user.uid);
+  }
+  return Stream.value([]);
+});

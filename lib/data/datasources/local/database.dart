@@ -1,102 +1,88 @@
-// lib/data/datasources/local/database.dart
+import 'dart:io';
 
 import 'package:drift/drift.dart';
-import 'database_web.dart'
-    if (dart.library.io) 'package:myapp/data/datasources/local/database_native.dart';
-import '../../../domain/entities/psa_log.dart' as domain;
+import 'package:drift/native.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as p;
+import '../../../domain/entities/psa_log.dart';
 
 part 'database.g.dart';
 
-// Renamed table to avoid name collision with domain entity
-class SymptomLogEntries extends Table {
+@DataClassName('SymptomLogDbEntity')
+class SymptomLogs extends Table {
   IntColumn get id => integer().autoIncrement()();
-  TextColumn get symptomName => text().withLength(min: 1, max: 100)();
-  IntColumn get severity => integer().withDefault(const Constant(0))();
-  DateTimeColumn get recordedAt => dateTime()();
-  TextColumn get notes => text().nullable()();
-  TextColumn get userId => text()();
+  TextColumn get name => text()();
+  IntColumn get severity => integer()();
+  DateTimeColumn get timestamp => dateTime()();
+  TextColumn get comments => text()();
 }
 
-// Renamed table to avoid name collision with domain entity
-class PsaLogEntries extends Table {
+@DataClassName('PsaLogDbEntity')
+class PsaLogs extends Table {
   IntColumn get id => integer().autoIncrement()();
   RealColumn get value => real()();
   DateTimeColumn get recordedAt => dateTime()();
-  TextColumn get notes => text().nullable()();
   TextColumn get userId => text()();
+  TextColumn get notes => text().nullable()();
   TextColumn get contextNotes => text().nullable()();
-  IntColumn get source =>
-      intEnum<domain.PsaLogSource>().withDefault(const Constant(0))();
+  IntColumn get source => integer().map(const PsaLogSourceConverter())();
 }
 
-@DriftAccessor(tables: [SymptomLogEntries])
+class PsaLogSourceConverter extends TypeConverter<PsaLogSource, int> {
+  const PsaLogSourceConverter();
+  @override
+  PsaLogSource fromSql(int fromDb) {
+    return PsaLogSource.values[fromDb];
+  }
+
+  @override
+  int toSql(PsaLogSource value) {
+    return value.index;
+  }
+}
+
+@DriftDatabase(tables: [SymptomLogs, PsaLogs], daos: [SymptomLogDao, PsaLogDao])
+class AppDatabase extends _$AppDatabase {
+  AppDatabase() : super(_openConnection());
+
+  @override
+  int get schemaVersion => 1;
+}
+
+LazyDatabase _openConnection() {
+  return LazyDatabase(() async {
+    final dbFolder = await getApplicationDocumentsDirectory();
+    final file = File(p.join(dbFolder.path, 'db.sqlite'));
+    return NativeDatabase(file);
+  });
+}
+
+@DriftAccessor(tables: [SymptomLogs])
 class SymptomLogDao extends DatabaseAccessor<AppDatabase>
     with _$SymptomLogDaoMixin {
   SymptomLogDao(super.db);
 
-  // DAO now returns the unambiguous Drift-generated data class 'SymptomLogEntry'
-  Stream<List<SymptomLogEntry>> watchAllLogs(String userId) {
-    return (select(symptomLogEntries)
-          ..where((tbl) => tbl.userId.equals(userId))
-          ..orderBy([
-            (t) =>
-                OrderingTerm(expression: t.recordedAt, mode: OrderingMode.desc),
-          ]))
-        .watch();
-  }
-
-  Future<int> insertLog(SymptomLogEntriesCompanion log) =>
-      into(symptomLogEntries).insert(log);
-
-  Future<bool> updateLog(SymptomLogEntriesCompanion log) =>
-      update(symptomLogEntries).replace(log);
-
-  Future<int> deleteLog(int id) =>
-      (delete(symptomLogEntries)..where((tbl) => tbl.id.equals(id))).go();
+  Future<List<SymptomLogDbEntity>> getAllSymptomLogs() =>
+      select(symptomLogs).get();
+  Stream<List<SymptomLogDbEntity>> watchAllSymptomLogs() =>
+      select(symptomLogs).watch();
+  Future<void> insertSymptomLog(SymptomLogsCompanion log) =>
+      into(symptomLogs).insert(log);
+  Future<void> updateSymptomLog(SymptomLogsCompanion log) =>
+      update(symptomLogs).replace(log);
+  Future<void> deleteSymptomLog(int id) =>
+      (delete(symptomLogs)..where((t) => t.id.equals(id))).go();
 }
 
-@DriftAccessor(tables: [PsaLogEntries])
+@DriftAccessor(tables: [PsaLogs])
 class PsaLogDao extends DatabaseAccessor<AppDatabase> with _$PsaLogDaoMixin {
   PsaLogDao(super.db);
 
-  // DAO now returns the unambiguous Drift-generated data class 'PsaLogEntry'
-  Stream<List<PsaLogEntry>> watchAllPsaLogs(String userId) {
-    return (select(psaLogEntries)
-          ..where((tbl) => tbl.userId.equals(userId))
-          ..orderBy([
-            (t) =>
-                OrderingTerm(expression: t.recordedAt, mode: OrderingMode.desc),
-          ]))
-        .watch();
-  }
-
-  Future<int> insertPsaLog(PsaLogEntriesCompanion log) =>
-      into(psaLogEntries).insert(log);
-
-  Future<bool> updatePsaLog(PsaLogEntriesCompanion log) =>
-      update(psaLogEntries).replace(log);
-
-  Future<int> deletePsaLog(int id) =>
-      (delete(psaLogEntries)..where((tbl) => tbl.id.equals(id))).go();
-}
-
-@DriftDatabase(tables: [SymptomLogEntries, PsaLogEntries], daos: [SymptomLogDao, PsaLogDao])
-class AppDatabase extends _$AppDatabase {
-  AppDatabase() : super(openConnection());
-
-  @override
-  int get schemaVersion => 3;
-
-  @override
-  MigrationStrategy get migration => MigrationStrategy(
-        onUpgrade: (m, from, to) async {
-          if (from < 3) {
-            // This migration logic needs to be adapted if table names change.
-            // For this fix, we assume the underlying SQL table name remains 'psa_logs'.
-            // Drift is smart about this if you only change the Dart class name.
-            await m.addColumn(psaLogEntries, psaLogEntries.contextNotes);
-            await m.addColumn(psaLogEntries, psaLogEntries.source);
-          }
-        },
-      );
+  Stream<List<PsaLogDbEntity>> watchPsaLogs(String userId) =>
+      (select(psaLogs)..where((t) => t.userId.equals(userId))).watch();
+  Future<void> insertPsaLog(PsaLogsCompanion log) => into(psaLogs).insert(log);
+  Future<void> updatePsaLog(PsaLogsCompanion log) =>
+      update(psaLogs).replace(log);
+  Future<void> deletePsaLog(String id) =>
+      (delete(psaLogs)..where((t) => t.id.equals(int.parse(id)))).go();
 }

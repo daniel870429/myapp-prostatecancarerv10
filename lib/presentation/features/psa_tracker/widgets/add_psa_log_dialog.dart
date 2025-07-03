@@ -28,8 +28,8 @@ class _AddPsaLogDialogState extends ConsumerState<AddPsaLogDialog> {
       final value = double.tryParse(_psaValueController.text);
       if (value != null) {
         ref.read(psaTrackerNotifierProvider.notifier).addPsaLog(
-              value,
-              _notesController.text,
+              value: value,
+              timestamp: DateTime.now(),
             );
         Navigator.of(context).pop();
       }
@@ -48,7 +48,8 @@ class _AddPsaLogDialogState extends ConsumerState<AddPsaLogDialog> {
             AppTextField(
               controller: _psaValueController,
               labelText: 'PSA 數值',
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              keyboardType:
+                  const TextInputType.numberWithOptions(decimal: true),
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return '請輸入 PSA 數值';

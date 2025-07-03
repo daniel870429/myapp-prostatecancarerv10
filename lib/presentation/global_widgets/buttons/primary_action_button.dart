@@ -45,17 +45,16 @@ class PrimaryActionButton extends StatelessWidget {
         textStyle: theme.textTheme.labelLarge,
       ),
       onPressed: isLoading ? null : onPressed,
-      child:
-          isLoading
-              ? const SizedBox(
-                height: 24,
-                width: 24,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2.5,
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                ),
-              )
-              : Text(label),
+      child: isLoading
+          ? const SizedBox(
+              height: 24,
+              width: 24,
+              child: CircularProgressIndicator(
+                strokeWidth: 2.5,
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+              ),
+            )
+          : Text(label),
     );
   }
 }

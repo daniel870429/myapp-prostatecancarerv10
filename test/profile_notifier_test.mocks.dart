@@ -124,28 +124,31 @@ class MockSymptomTrackerNotifier extends _i1.Mock
       ) as _i4.Stream<List<_i6.SymptomLog>>);
 
   @override
-  _i4.Future<void> addSymptom(
-    String? symptomName,
-    int? severity,
-    String? notes,
-  ) =>
+  _i4.Future<void> addSymptomLog({
+    required String? name,
+    required int? severity,
+    required DateTime? timestamp,
+    required String? comments,
+  }) =>
       (super.noSuchMethod(
         Invocation.method(
-          #addSymptom,
-          [
-            symptomName,
-            severity,
-            notes,
-          ],
+          #addSymptomLog,
+          [],
+          {
+            #name: name,
+            #severity: severity,
+            #timestamp: timestamp,
+            #comments: comments,
+          },
         ),
         returnValue: _i4.Future<void>.value(),
         returnValueForMissingStub: _i4.Future<void>.value(),
       ) as _i4.Future<void>);
 
   @override
-  _i4.Future<void> deleteSymptom(int? id) => (super.noSuchMethod(
+  _i4.Future<void> deleteSymptomLog(int? id) => (super.noSuchMethod(
         Invocation.method(
-          #deleteSymptom,
+          #deleteSymptomLog,
           [id],
         ),
         returnValue: _i4.Future<void>.value(),

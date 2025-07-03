@@ -18,15 +18,14 @@ class PdfReportService {
     final headers = ['日期', '症狀名稱', '嚴重程度', '筆記'];
 
     // Convert logs to a list of lists for the table
-    final data =
-        logs.map((log) {
-          return [
-            DateFormat.yMd().format(log.recordedAt),
-            log.symptomName,
-            log.severity.toString(),
-            log.notes ?? '',
-          ];
-        }).toList();
+    final data = logs.map((log) {
+      return [
+        DateFormat.yMd().format(log.timestamp),
+        log.name,
+        log.severity.toString(),
+        log.comments,
+      ];
+    }).toList();
 
     pdf.addPage(
       pw.MultiPage(

@@ -12,10 +12,9 @@ class PsaTrendCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final psaLogsAsync = ref.watch(psaTrackerNotifierProvider);
-    final colors =
-        Theme.of(context).brightness == Brightness.light
-            ? AppColors.light
-            : AppColors.dark;
+    final colors = Theme.of(context).brightness == Brightness.light
+        ? AppColors.light
+        : AppColors.dark;
 
     return DashboardCard(
       title: 'PSA 趨勢',
@@ -38,13 +37,12 @@ class PsaTrendCard extends ConsumerWidget {
               return const Center(child: Text('尚無 PSA 紀錄'));
             }
 
-            final spots =
-                logs.map((log) {
-                  return FlSpot(
-                    log.recordedAt.millisecondsSinceEpoch.toDouble(),
-                    log.value,
-                  );
-                }).toList();
+            final spots = logs.map((log) {
+              return FlSpot(
+                log.recordedAt.millisecondsSinceEpoch.toDouble(),
+                log.value,
+              );
+            }).toList();
 
             return LineChart(
               LineChartData(

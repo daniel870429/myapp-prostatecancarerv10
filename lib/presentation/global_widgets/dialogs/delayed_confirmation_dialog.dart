@@ -11,7 +11,9 @@ class DelayedConfirmationDialog extends StatefulWidget {
   final Duration delay;
 
   const DelayedConfirmationDialog({
-    required this.title, required this.content, super.key,
+    required this.title,
+    required this.content,
+    super.key,
     this.confirmText = '確認',
     this.delay = const Duration(seconds: 2),
   });
@@ -67,11 +69,12 @@ class _DelayedConfirmationDialogState extends State<DelayedConfirmationDialog> {
           valueListenable: ValueNotifier(_isConfirmButtonEnabled),
           builder: (context, isEnabled, child) {
             return TextButton(
-              onPressed: isEnabled
-                  ? () => Navigator.of(context).pop(true)
-                  : null,
+              onPressed:
+                  isEnabled ? () => Navigator.of(context).pop(true) : null,
               child: Text(
-                isEnabled ? widget.confirmText : '${widget.confirmText} ($_countdown)',
+                isEnabled
+                    ? widget.confirmText
+                    : '${widget.confirmText} ($_countdown)',
                 style: TextStyle(
                   color: isEnabled ? errorColor : theme.disabledColor,
                 ),

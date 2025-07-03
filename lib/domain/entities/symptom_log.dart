@@ -1,23 +1,19 @@
-// lib/domain/entities/symptom_log.dart
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-/// Represents a single symptom log entry.
-///
-/// This is a pure, framework-agnostic business object. It contains the core
-/// business data and logic, without any dependencies on the data or presentation layers.
-class SymptomLog {
-  const SymptomLog({
-    required this.id,
-    required this.symptomName,
-    required this.severity,
-    required this.recordedAt,
-    required this.userId,
-    this.notes,
-  });
+part 'symptom_log.freezed.dart';
+part 'symptom_log.g.dart';
 
-  final int id;
-  final String symptomName;
-  final int severity; // e.g., 0-10 scale
-  final DateTime recordedAt;
-  final String? notes;
-  final String userId;
+@freezed
+class SymptomLog with _$SymptomLog {
+  const factory SymptomLog({
+    required int id,
+    required String name,
+    required int severity,
+    required DateTime timestamp,
+    required String comments,
+    required String userId,
+  }) = _SymptomLog;
+
+  factory SymptomLog.fromJson(Map<String, dynamic> json) =>
+      _$SymptomLogFromJson(json);
 }

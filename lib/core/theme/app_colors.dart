@@ -8,12 +8,12 @@ import 'package:flutter/material.dart';
 class AppColors {
   // --- Core Semantic Roles ---
   final Color
-  primary; // For primary actions, key information. Trustworthy and calm.
+      primary; // For primary actions, key information. Trustworthy and calm.
   final Color onPrimary; // Text/icons on primary color.
   final Color
-  secondary; // For secondary actions, accents. Hopeful and encouraging.
+      secondary; // For secondary actions, accents. Hopeful and encouraging.
   final Color
-  error; // For critical alerts, destructive actions. Clear but not jarring.
+      error; // For critical alerts, destructive actions. Clear but not jarring.
   final Color background; // Overall page background.
   final Color surface; // Card backgrounds, dialogs.
   final Color onSurface; // Primary text color on surface/background.
