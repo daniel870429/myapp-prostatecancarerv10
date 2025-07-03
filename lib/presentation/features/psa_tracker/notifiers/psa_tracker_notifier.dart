@@ -39,6 +39,6 @@ class PsaTrackerNotifier extends _$PsaTrackerNotifier {
       return;
     }
     final repository = ref.read(psaRepositoryProvider);
-    await repository.deletePsaLog(id);
+    await repository.deletePsaLog(id, user.uid);
   }
 }

@@ -1,9 +1,9 @@
 import 'package:drift/drift.dart';
-import '../datasources/local/database.dart';
 import '../../domain/entities/psa_log.dart';
+import '../datasources/local/database.dart';
 
 class PsaLogMapper {
-  PsaLog toEntity(PsaLogDbEntity entity) {
+  static PsaLog toEntity(PsaLogDbEntity entity) {
     return PsaLog(
       id: entity.id,
       value: entity.value,
@@ -15,11 +15,7 @@ class PsaLogMapper {
     );
   }
 
-  List<PsaLog> toEntityList(List<PsaLogDbEntity> entities) {
-    return entities.map(toEntity).toList();
-  }
-
-  PsaLogsCompanion toCompanion(PsaLog entity) {
+  static PsaLogsCompanion toCompanion(PsaLog entity) {
     return PsaLogsCompanion(
       id: Value(entity.id),
       value: Value(entity.value),

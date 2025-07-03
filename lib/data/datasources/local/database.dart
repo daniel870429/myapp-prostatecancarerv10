@@ -39,7 +39,17 @@ class PsaLogSourceConverter extends TypeConverter<PsaLogSource, int> {
   }
 }
 
-@DriftDatabase(tables: [SymptomLogs, PsaLogs], daos: [SymptomLogDao, PsaLogDao])
+@DataClassName('SyncQueueItem')
+class SyncQueueItems extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  TextColumn get operation => text()(); // e.g., 'create', 'update', 'delete'
+  TextColumn get entityType => text()(); // e.g., 'psa', 'symptom'
+  TextColumn get entityId => text()();
+  TextColumn get payload => text()(); // JSON-encoded data
+  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+}
+
+@DriftDatabase(tables: [SymptomLogs, PsaLogs, SyncQueueItems], daos: [SymptomLogDao, PsaLogDao])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(openConnection());
 

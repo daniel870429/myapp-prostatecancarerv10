@@ -1,26 +1,26 @@
-import 'package:drift/drift.dart' hide JsonKey;
-import '../datasources/local/database.dart';
+import 'package:drift/drift.dart';
 import '../../domain/entities/symptom_log.dart';
+import '../datasources/local/database.dart';
 
 class SymptomLogMapper {
-  SymptomLog fromDb(SymptomLogDbEntity entity, String userId) {
+  static SymptomLog toEntity(SymptomLogDbEntity entity) {
     return SymptomLog(
       id: entity.id,
       name: entity.name,
       severity: entity.severity,
       timestamp: entity.timestamp,
       comments: entity.comments,
-      userId: userId,
+      userId: '', // This will be handled by the repository
     );
   }
 
-  SymptomLogsCompanion toDb(SymptomLog symptomLog) {
+  static SymptomLogsCompanion toCompanion(SymptomLog entity) {
     return SymptomLogsCompanion(
-      id: Value(symptomLog.id),
-      name: Value(symptomLog.name),
-      severity: Value(symptomLog.severity),
-      timestamp: Value(symptomLog.timestamp),
-      comments: Value(symptomLog.comments),
+      id: Value(entity.id),
+      name: Value(entity.name),
+      severity: Value(entity.severity),
+      timestamp: Value(entity.timestamp),
+      comments: Value(entity.comments),
     );
   }
 }

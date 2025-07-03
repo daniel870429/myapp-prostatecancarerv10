@@ -36,26 +36,42 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         path: '/login',
         builder: (context, state) => const LoginPage(),
       ),
-      ShellRoute(
-        builder: (context, state, child) {
-          return ScaffoldWithNestedNavigation(child: child);
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell) {
+          return ScaffoldWithNestedNavigation(navigationShell: navigationShell);
         },
-        routes: [
-          GoRoute(
-            path: '/home',
-            builder: (context, state) => const HomePage(),
+        branches: [
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/home',
+                builder: (context, state) => const HomePage(),
+              ),
+            ],
           ),
-          GoRoute(
-            path: '/symptom-tracker',
-            builder: (context, state) => const SymptomTrackerPage(),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/symptom-tracker',
+                builder: (context, state) => const SymptomTrackerPage(),
+              ),
+            ],
           ),
-          GoRoute(
-            path: '/education',
-            builder: (context, state) => const EducationPage(),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/education',
+                builder: (context, state) => const EducationPage(),
+              ),
+            ],
           ),
-          GoRoute(
-            path: '/profile',
-            builder: (context, state) => const ProfilePage(),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/profile',
+                builder: (context, state) => const ProfilePage(),
+              ),
+            ],
           ),
         ],
       ),

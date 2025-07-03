@@ -337,14 +337,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "7.0.1"
-  firebase_ai:
-    dependency: "direct main"
-    description:
-      name: firebase_ai
-      sha256: "50bc72aa9569070f4361e3157ab4ae9d8dc437959fc00b201625deebddb57487"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.2.0"
   firebase_analytics:
     dependency: "direct main"
     description:
@@ -539,6 +531,54 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.6.1"
+  flutter_secure_storage:
+    dependency: "direct main"
+    description:
+      name: flutter_secure_storage
+      sha256: "9cad52d75ebc511adfae3d447d5d13da15a55a92c9410e50f67335b6d21d16ea"
+      url: "https://pub.dev"
+    source: hosted
+    version: "9.2.4"
+  flutter_secure_storage_linux:
+    dependency: transitive
+    description:
+      name: flutter_secure_storage_linux
+      sha256: be76c1d24a97d0b98f8b54bce6b481a380a6590df992d0098f868ad54dc8f688
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.2.3"
+  flutter_secure_storage_macos:
+    dependency: transitive
+    description:
+      name: flutter_secure_storage_macos
+      sha256: "6c0a2795a2d1de26ae202a0d78527d163f4acbb11cde4c75c670f3a0fc064247"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.1.3"
+  flutter_secure_storage_platform_interface:
+    dependency: transitive
+    description:
+      name: flutter_secure_storage_platform_interface
+      sha256: cf91ad32ce5adef6fba4d736a542baca9daf3beac4db2d04be350b87f69ac4a8
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.2"
+  flutter_secure_storage_web:
+    dependency: transitive
+    description:
+      name: flutter_secure_storage_web
+      sha256: f4ebff989b4f07b2656fb16b47852c0aab9fed9b4ec1c70103368337bc1886a9
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.2.1"
+  flutter_secure_storage_windows:
+    dependency: transitive
+    description:
+      name: flutter_secure_storage_windows
+      sha256: b20b07cb5ed4ed74fc567b78a72936203f587eba460af1df11281c9326cd3709
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.1.2"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -590,10 +630,18 @@ packages:
     dependency: "direct main"
     description:
       name: go_router
-      sha256: c489908a54ce2131f1d1b7cc631af9c1a06fac5ca7c449e959192089f9489431
+      sha256: f02fd7d2a4dc512fec615529824fdd217fecb3a3d3de68360293a551f21634b3
       url: "https://pub.dev"
     source: hosted
-    version: "16.0.0"
+    version: "14.8.1"
+  google_generative_ai:
+    dependency: "direct main"
+    description:
+      name: google_generative_ai
+      sha256: "71f613d0247968992ad87a0eb21650a566869757442ba55a31a81be6746e0d1f"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.4.7"
   graphs:
     dependency: transitive
     description:
@@ -643,10 +691,10 @@ packages:
     dependency: "direct main"
     description:
       name: intl
-      sha256: "3df61194eb431efc39c4ceba583b95633a403f46c9fd341e550ce0bfa50e9aa5"
+      sha256: d6f56758b7d3014a48af9701c085700aac781a92a87a62b1333b46d8879661cf
       url: "https://pub.dev"
     source: hosted
-    version: "0.20.2"
+    version: "0.19.0"
   io:
     dependency: transitive
     description:
@@ -659,10 +707,10 @@ packages:
     dependency: transitive
     description:
       name: js
-      sha256: "53385261521cc4a0c4658fd0ad07a7d14591cf8fc33abbceae306ddb974888dc"
+      sha256: f2c445dce49627136094980615a031419f7f3eb393237e4ecd97ac15dea343f3
       url: "https://pub.dev"
     source: hosted
-    version: "0.7.2"
+    version: "0.6.7"
   json_annotation:
     dependency: "direct main"
     description:
@@ -711,6 +759,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.1.1"
+  logger:
+    dependency: "direct main"
+    description:
+      name: logger
+      sha256: "2621da01aabaf223f8f961e751f2c943dbb374dc3559b982f200ccedadaa6999"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.6.0"
   logging:
     dependency: transitive
     description:
@@ -1020,6 +1076,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "7.0.0"
+  sqlcipher_flutter_libs:
+    dependency: "direct main"
+    description:
+      name: sqlcipher_flutter_libs
+      sha256: "550a0758aa4bba6eab75035102809506d76f2d71b9fb0c0f6e9cc414db0fe064"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.6.7"
   sqlite3:
     dependency: "direct main"
     description:
@@ -1236,6 +1300,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.13.0"
+  workmanager:
+    dependency: "direct main"
+    description:
+      name: workmanager
+      sha256: ed13530cccd28c5c9959ad42d657cd0666274ca74c56dea0ca183ddd527d3a00
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.5.2"
   xdg_directories:
     dependency: transitive
     description:

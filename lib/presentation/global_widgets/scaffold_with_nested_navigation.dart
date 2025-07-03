@@ -3,79 +3,48 @@ import 'package:go_router/go_router.dart';
 
 class ScaffoldWithNestedNavigation extends StatelessWidget {
   const ScaffoldWithNestedNavigation({
-    required this.child,
+    required this.navigationShell,
     super.key,
   });
 
-  final Widget child;
+  final StatefulNavigationShell navigationShell;
 
-  void _goBranch(int index, BuildContext context) {
-    switch (index) {
-      case 0:
-        GoRouter.of(context).go('/home');
-        break;
-      case 1:
-        GoRouter.of(context).go('/symptom-tracker');
-        break;
-      case 2:
-        GoRouter.of(context).go('/education');
-        break;
-      case 3:
-        GoRouter.of(context).go('/profile');
-        break;
-    }
-  }
-
-  int _calculateSelectedIndex(BuildContext context) {
-    final String location = GoRouterState.of(context).uri.toString();
-    if (location.startsWith('/home')) {
-      return 0;
-    }
-    if (location.startsWith('/symptom-tracker')) {
-      return 1;
-    }
-    if (location.startsWith('/education')) {
-      return 2;
-    }
-    if (location.startsWith('/profile')) {
-      return 3;
-    }
-    return 0;
+  void _goBranch(int index) {
+    navigationShell.goBranch(
+      index,
+      initialLocation: index == navigationShell.currentIndex,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: child,
+      body: navigationShell,
       bottomNavigationBar: NavigationBar(
-        selectedIndex: _calculateSelectedIndex(context),
-        destinations: [
+        selectedIndex: navigationShell.currentIndex,
+        destinations: const [
           NavigationDestination(
             label: 'Home',
-            icon: const Icon(Icons.home_outlined),
-            selectedIcon:
-                Icon(Icons.home, color: Theme.of(context).primaryColor),
+            icon: Icon(Icons.home_outlined),
+            selectedIcon: Icon(Icons.home),
           ),
           NavigationDestination(
             label: 'Symptoms',
-            icon: const Icon(Icons.track_changes_outlined),
-            selectedIcon: Icon(Icons.track_changes,
-                color: Theme.of(context).primaryColor),
+            icon: Icon(Icons.track_changes_outlined),
+            selectedIcon: Icon(Icons.track_changes),
           ),
           NavigationDestination(
             label: 'Learn',
-            icon: const Icon(Icons.school_outlined),
-            selectedIcon:
-                Icon(Icons.school, color: Theme.of(context).primaryColor),
+            icon: Icon(Icons.school_outlined),
+            selectedIcon: Icon(Icons.school),
           ),
           NavigationDestination(
             label: 'Profile',
-            icon: const Icon(Icons.person_outline),
-            selectedIcon:
-                Icon(Icons.person, color: Theme.of(context).primaryColor),
+            icon: Icon(Icons.person_outline),
+            selectedIcon: Icon(Icons.person),
           ),
         ],
-        onDestinationSelected: (index) => _goBranch(index, context),
+        onDestinationSelected: _goBranch,
       ),
     );
   }

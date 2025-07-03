@@ -7,7 +7,7 @@ part of 'psa_tracker_notifier.dart';
 // **************************************************************************
 
 String _$psaTrackerNotifierHash() =>
-    r'bd6332cb06f73726905cb891b0be92f4b686a9b9';
+    r'147a7bec2926bfd705694236f3d1a63fcbe92a7c';
 
 /// See also [PsaTrackerNotifier].
 @ProviderFor(PsaTrackerNotifier)

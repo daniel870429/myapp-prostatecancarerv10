@@ -28,15 +28,25 @@ final databaseProvider = Provider<AppDatabase>((ref) {
   return AppDatabase();
 });
 
+final symptomLogDaoProvider = Provider<SymptomLogDao>((ref) {
+  final db = ref.watch(databaseProvider);
+  return db.symptomLogDao;
+});
+
+final psaLogDaoProvider = Provider<PsaLogDao>((ref) {
+  final db = ref.watch(databaseProvider);
+  return db.psaLogDao;
+});
+
 // -- Repositories --
 final symptomRepositoryProvider = Provider<SymptomRepository>((ref) {
-  final firestore = ref.watch(firestoreProvider);
-  return SymptomRepositoryImpl(firestore);
+  final symptomLogDao = ref.watch(symptomLogDaoProvider);
+  return SymptomRepositoryImpl(symptomLogDao);
 });
 
 final psaRepositoryProvider = Provider<PsaRepository>((ref) {
-  final firestore = ref.watch(firestoreProvider);
-  return PsaRepositoryImpl(firestore);
+  final psaLogDao = ref.watch(psaLogDaoProvider);
+  return PsaRepositoryImpl(psaLogDao);
 });
 
 // -- Data Streams --

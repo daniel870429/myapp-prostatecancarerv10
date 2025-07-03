@@ -1,51 +1,36 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../domain/entities/symptom_log.dart';
 import '../../domain/repositories/symptom_repository.dart';
+import '../datasources/local/database.dart';
+import '../mappers/symptom_log_mapper.dart';
 
 class SymptomRepositoryImpl implements SymptomRepository {
-  final FirebaseFirestore _firestore;
+  final SymptomLogDao _symptomLogDao;
 
-  SymptomRepositoryImpl(this._firestore);
+  SymptomRepositoryImpl(this._symptomLogDao);
 
   @override
   Stream<List<SymptomLog>> watchAllSymptomLogs(String userId) {
-    return _firestore
-        .collection('users')
-        .doc(userId)
-        .collection('symptom_logs')
-        .snapshots()
-        .map((snapshot) => snapshot.docs
-            .map((doc) => SymptomLog.fromJson(doc.data()))
-            .toList());
+    return _symptomLogDao.watchAllSymptomLogs().map((entities) =>
+        entities.map(SymptomLogMapper.toEntity).toList());
   }
 
   @override
   Future<void> addSymptomLog(SymptomLog log) async {
-    final docRef = _firestore
-        .collection('users')
-        .doc(log.userId)
-        .collection('symptom_logs')
-        .doc();
-    await docRef.set(log.copyWith(id: int.tryParse(docRef.id) ?? 0).toJson());
+    final companion = SymptomLogMapper.toCompanion(log);
+    await _symptomLogDao.insertSymptomLog(companion);
+    // TODO: Add to sync queue
   }
 
   @override
   Future<void> updateSymptomLog(SymptomLog log) async {
-    await _firestore
-        .collection('users')
-        .doc(log.userId)
-        .collection('symptom_logs')
-        .doc(log.id.toString())
-        .update(log.toJson());
+    final companion = SymptomLogMapper.toCompanion(log);
+    await _symptomLogDao.updateSymptomLog(companion);
+    // TODO: Add to sync queue
   }
 
   @override
   Future<void> deleteSymptomLog(int id, String userId) async {
-    await _firestore
-        .collection('users')
-        .doc(userId)
-        .collection('symptom_logs')
-        .doc(id.toString())
-        .delete();
+    await _symptomLogDao.deleteSymptomLog(id);
+    // TODO: Add to sync queue
   }
 }
